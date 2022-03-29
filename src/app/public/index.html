@@ -105,7 +105,7 @@
                     authType: 'anonymous',
                     clientId: 'd0e4165a-a456-4cb0-8862-96d5a21e01f6',
                     getToken: function (resolve, reject, map) {                                                
-                        fetch("/api/azureMapsToken").then(r => r.text()).then(token => resolve(token));
+                        fetch("https://func-azlearn-cosmic.azurewebsites.net/api/azureMapsToken").then(r => r.text()).then(token => resolve(token));
                     }
                 }
             });
