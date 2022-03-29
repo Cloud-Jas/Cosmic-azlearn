@@ -1,16 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
-    <ApplicationInsightsResourceId>/subscriptions/83343ae6-3277-475f-8be1-946e5d6d9359/resourceGroups/rg-cloudjas/providers/microsoft.insights/components/appi-azlearn-cosmic</ApplicationInsightsResourceId>
-    <UserSecretsId>1acde5fb-44d3-477d-9227-4957cd31699f</UserSecretsId>
+    <AzureFunctionsVersion>v4</AzureFunctionsVersion>    
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.15.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="1.0.0" />
+  <ItemGroup>    
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="1.3.0" />
     <PackageReference Include="Azure.Identity" Version="1.5.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.0" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.0.1" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
