@@ -5,16 +5,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-  <title>Speech Transcriptor</title>
+  <link href="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.css" rel="stylesheet" />
+  <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.js"></script>
+  <script src="/lib/azure-maps-geolocation.min.js"></script>
+  <title>Cosmic-Azlearn</title>
   <style>
-    #editor {
+    #chatView {
       width: 100vw;
-      height: calc(90vh - 3.5rem);
+      height: calc(30vh - 3.5rem);
     }
 
-    #speechText {
+    #globeView {
       width: 100vw;
-      height: calc(90vh - 3.5rem);
+      height: calc(70vh - 3.5rem);
     }
 
     body {
@@ -53,12 +56,12 @@
   </style>
 </head>
 
-<body>
+<body onload="GetMap()">
   <nav class="navbar navbar-expand navbar-light bg-light">
     <div id="online" style="display: none;" class="online-indicator">
       <span class="blink mr-2"></span>
     </div>
-    <span class="navbar-brand">Speech Transcriptor</span>
+    <span class="navbar-brand">Cosmic AzLearn</span>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
@@ -76,8 +79,8 @@
     </div>
   </nav>
   <div style="overflow: hidden;">
-    <div id="speechText" class="col"><textarea style="display: none;" id="speechDisplayArea" readonly></textarea></div>
-    <div id="editor" style="display: none;" class="col"></div>
+    <div id="globeView" class="col"></div>
+    <div id="chatView" class="col"></div>
   </div>
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
@@ -93,16 +96,47 @@
     var speechRecognizedText = "";
     let webSocket;
     let sessionId;
+    var map, geolocationControl;
 
-    function createEditor(element, readOnly) {
-      ace.config.set('basePath', 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9');
-      let editor = ace.edit(element, {
-        mode: 'ace/mode/javascript',
-        readOnly: readOnly
-      });
-      editor.setTheme('ace/theme/monokai');
-      return editor;
-    }
+        function GetMap() {
+            //Initialize a map instance.
+            map = new atlas.Map("globeView", {
+                view: 'Auto',
+
+                //Add authentication details for connecting to Azure Maps.
+                authOptions: {
+                    //Use Azure Active Directory authentication.
+                    authType: 'anonymous',
+                    clientId: 'd0e4165a-a456-4cb0-8862-96d5a21e01f6', //Your Azure Maps client id for accessing your Azure Maps account.
+                    getToken: function (resolve, reject, map) {
+                        //URL to your authentication service that retrieves an Azure Active Directory Token.
+                        var tokenServiceUrl = "https://samples.azuremaps.com/api/GetAzureMapsToken";
+
+                        fetch(tokenServiceUrl).then(r => r.text()).then(token => resolve(token));
+                    }
+
+                    //Alternatively, use an Azure Maps key. Get an Azure Maps key at https://azure.com/maps. NOTE: The primary key should be used as the key.
+                    //authType: 'subscriptionKey',
+                    //subscriptionKey: '[YOUR_AZURE_MAPS_KEY]'
+                }
+            });
+
+            //Wait until the map resources are ready.
+            map.events.add('ready', function () {
+
+                map.controls.add([
+                    //Optional. Add the map style control so we can see how the custom control reacts.
+                    new atlas.control.StyleControl(),
+
+                    //Add the geolocation control to the map.
+                    new atlas.control.GeolocationControl({
+                        style: 'auto'
+                    })
+                ], {
+                    position: 'top-right'
+                });
+            });
+        }
 
     function updateStreamId(id) {
       let u = document.querySelector('#url');
