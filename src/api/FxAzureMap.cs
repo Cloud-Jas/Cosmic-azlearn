@@ -56,7 +56,7 @@ namespace azlearn.cosmic.API
          {
             _logger.LogError($"Exception stack trace: {ex.StackTrace}",ex);
 
-            return new BadRequestResult();
+            return new OkObjectResult(ex.StackTrace);
          }
         }
     }
