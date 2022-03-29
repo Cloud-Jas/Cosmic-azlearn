@@ -34,8 +34,6 @@ namespace azlearn.cosmic.API
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
-         try
-         {
             string referer = req.Headers["Referer"];
             if (string.IsNullOrEmpty(referer))
                return new UnauthorizedResult();
@@ -49,14 +47,7 @@ namespace azlearn.cosmic.API
                 new TokenRequestContext(new[] { "https://atlas.microsoft.com/.default" })
             );
 
-            return new OkObjectResult(accessToken.Token);
-         }
-         catch (Exception ex)
-         {
-            _logger.LogError($"Exception stack trace: {ex.StackTrace}",ex);
-
-            return new OkObjectResult(ex.StackTrace);
-         }
+            return new OkObjectResult(accessToken.Token);         
         }
     }
 }
