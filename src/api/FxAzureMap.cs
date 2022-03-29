@@ -18,8 +18,7 @@ namespace azlearn.cosmic.API
     {
         private readonly ILogger<FxAzureMap> _logger;
 
-        private static readonly string[] allowd = { "https://samples.azuremaps.com/",
-                                                    "https://demo.azuremaps.com/",
+        private static readonly string[] allowd = { "https://wonderful-river-07ec3e210.1.azurestaticapps.net/",
                                                     "http://localhost"};
 
         public FxAzureMap(ILogger<FxAzureMap> log)

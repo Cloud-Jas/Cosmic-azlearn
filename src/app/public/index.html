@@ -98,37 +98,20 @@
     let sessionId;
     var map, geolocationControl;
 
-        function GetMap() {
-            //Initialize a map instance.
+        function GetMap() {            
             map = new atlas.Map("globeView", {
-                view: 'Auto',
-
-                //Add authentication details for connecting to Azure Maps.
-                authOptions: {
-                    //Use Azure Active Directory authentication.
+                view: 'Auto',                
+                authOptions: {                    
                     authType: 'anonymous',
-                    clientId: 'd0e4165a-a456-4cb0-8862-96d5a21e01f6', //Your Azure Maps client id for accessing your Azure Maps account.
-                    getToken: function (resolve, reject, map) {
-                        //URL to your authentication service that retrieves an Azure Active Directory Token.
-                        var tokenServiceUrl = "https://samples.azuremaps.com/api/GetAzureMapsToken";
-
-                        fetch(tokenServiceUrl).then(r => r.text()).then(token => resolve(token));
+                    clientId: 'd0e4165a-a456-4cb0-8862-96d5a21e01f6',
+                    getToken: function (resolve, reject, map) {                                                
+                        fetch("/api/azureMapsToken").then(r => r.text()).then(token => resolve(token));
                     }
-
-                    //Alternatively, use an Azure Maps key. Get an Azure Maps key at https://azure.com/maps. NOTE: The primary key should be used as the key.
-                    //authType: 'subscriptionKey',
-                    //subscriptionKey: '[YOUR_AZURE_MAPS_KEY]'
                 }
             });
-
-            //Wait until the map resources are ready.
             map.events.add('ready', function () {
-
                 map.controls.add([
-                    //Optional. Add the map style control so we can see how the custom control reacts.
                     new atlas.control.StyleControl(),
-
-                    //Add the geolocation control to the map.
                     new atlas.control.GeolocationControl({
                         style: 'auto'
                     })
