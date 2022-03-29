@@ -35,13 +35,15 @@ namespace azlearn.cosmic.API
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
-           string referer = req.Headers["Referer"];
+         try
+         {
+            string referer = req.Headers["Referer"];
             if (string.IsNullOrEmpty(referer))
-                return new UnauthorizedResult();
+               return new UnauthorizedResult();
 
             string result = Array.Find(allowd, site => referer.StartsWith(site, StringComparison.OrdinalIgnoreCase));
             if (string.IsNullOrEmpty(result))
-                return new UnauthorizedResult();
+               return new UnauthorizedResult();
 
             var tokenCredential = new DefaultAzureCredential();
             var accessToken = await tokenCredential.GetTokenAsync(
@@ -49,6 +51,13 @@ namespace azlearn.cosmic.API
             );
 
             return new OkObjectResult(accessToken.Token);
+         }
+         catch (Exception ex)
+         {
+            _logger.LogError($"Exception stack trace: {ex.StackTrace}",ex);
+
+            return new BadRequestResult();
+         }
         }
     }
 }
