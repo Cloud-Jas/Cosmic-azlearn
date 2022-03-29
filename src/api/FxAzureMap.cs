@@ -27,8 +27,7 @@ namespace azlearn.cosmic.API
         }
 
         [FunctionName("FxAzureMap")]
-        [OpenApiOperation(operationId: "GetToken", tags: new[] { "name" })]
-        [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
+        [OpenApiOperation(operationId: "GetToken", tags: new[] { "name" })]        
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
         public async Task<IActionResult> GetToken(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "azureMapsToken")] HttpRequest req)
