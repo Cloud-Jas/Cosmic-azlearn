@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <title>Speech Transcriptor</title>
+  <style>
+    #editor {
+      width: 100vw;
+      height: calc(90vh - 3.5rem);
+    }
+
+    #speechText {
+      width: 100vw;
+      height: calc(90vh - 3.5rem);
+    }
+
+    body {
+      font-size: 1.2vw;
+    }
+
+    span.blink {
+      display: block;
+      width: 15px;
+      height: 15px;
+
+      background-color: #0fcc45;
+      opacity: 0.7;
+      border-radius: 50%;
+
+      animation: blink 1s linear infinite;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100%;
+      -webkit-box-sizing: border-box;
+      /* Safari/Chrome, other WebKit */
+      -moz-box-sizing: border-box;
+      /* Firefox, other Gecko */
+      box-sizing: border-box;
+      /* Opera/IE 8+ */
+    }
+
+    @keyframes blink {
+      100% {
+        transform: scale(2, 2);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand navbar-light bg-light">
+    <div id="online" style="display: none;" class="online-indicator">
+      <span class="blink mr-2"></span>
+    </div>
+    <span class="navbar-brand">Speech Transcriptor</span>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" id="url" target="_blank" href="#"></a>
+        </li>
+      </ul>
+      <div id="speakerDashboard" style="display: none;">
+        <button id="startBtn" onclick="onStartSession()" type="button" class="btn btn-success mr-1">Start</button>
+        <button id="stopBtn" disabled onclick="onStopSession()" type="button" class="btn btn-danger">Stop</button>
+      </div>
+      <div id="audienceDashboard" style="display: none;">
+        <button id="joinBtn" onclick="onJoinSession()" type="button" class="btn btn-success mr-1">Join</button>
+        <button id="leaveBtn" disabled onclick="onLeaveSession()" type="button" class="btn btn-danger">Leave</button>
+      </div>
+    </div>
+  </nav>
+  <div style="overflow: hidden;">
+    <div id="speechText" class="col"><textarea style="display: none;" id="speechDisplayArea" readonly></textarea></div>
+    <div id="editor" style="display: none;" class="col"></div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/ace.min.js"></script>
+  <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
+  <script>
+
+    var SpeechSDK;
+    var recognizer;
+    var speechDisplayArea = document.getElementById('speechDisplayArea');
+    var editorDisplayArea = document.getElementById('editor');
+    var speechRecognizedText = "";
+    let webSocket;
+    let sessionId;
+
+    function createEditor(element, readOnly) {
+      ace.config.set('basePath', 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9');
+      let editor = ace.edit(element, {
+        mode: 'ace/mode/javascript',
+        readOnly: readOnly
+      });
+      editor.setTheme('ace/theme/monokai');
+      return editor;
+    }
+
+    function updateStreamId(id) {
+      let u = document.querySelector('#url');
+      let url = `${location.protocol}//${location.host}${location.pathname}#${id}`;
+      u.setAttribute('href', url);
+      u.textContent = url;
+    }
+
+    function updateStatus(status) {
+      var onlineDiv = document.getElementById('online');
+      if (status == 'Connected')
+        onlineDiv.style.display = "block";
+      else
+        onlineDiv.style.display = "none";
+    }
+    function updateSpeakerStatus(status) {
+      var audiencedashboard = document.getElementById('audienceDashboard');
+      var speakerDashboard = document.getElementById('speakerDashboard');
+
+
+      if (status == 'Connected') {
+        audiencedashboard.style.display = "none";
+        speakerDashboard.style.display = "block";
+        speechDisplayArea.readOnly = false;
+      }
+      else {
+        audiencedashboard.style.display = "block";
+        speakerDashboard.style.display = "none";
+        speechDisplayArea.readOnly = true;
+      }
+    }
+
+    function updateAudienceStatus(status) {
+      var audiencedashboard = document.getElementById('audienceDashboard');
+      var speakerDashboard = document.getElementById('speakerDashboard');
+
+      speechDisplayArea.readOnly = true;
+
+      if (status == 'Connected') {
+        audiencedashboard.style.display = "block";
+        speakerDashboard.style.display = "none";
+      }
+      else {
+        audiencedashboard.style.display = "none";
+        speakerDashboard.style.display = "block";
+      }
+    }
+
+    async function initialize(url, isSpeaker) {
+
+      let res = await fetch(url);
+      let data = await res.json();
+      updateStreamId(data.id);
+      sessionId = data.id;
+
+      let ws = new WebSocket(data.url, 'json.webpubsub.azure.v1');
+      webSocket = ws;
+      let editor = createEditor(document.querySelector('#editor'), true);
+
+      if (isSpeaker) {
+        let speechTokenData = await fetch('/speech-token');
+        let response = await speechTokenData.json();
+        let token = response.token;
+
+
+        let speechConfig = SpeechSDK.SpeechConfig.fromAuthorizationToken(token, response.region);
+        speechConfig.SpeechRecognitionLanguage = "en-US";
+
+
+        var audioConfig = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
+        recognizer = new SpeechSDK.SpeechRecognizer(speechConfig, audioConfig);
+
+        recognizer.recognizing = recognizerCallback.bind(this);
+
+        recognizer.recognized = holdRecognized.bind(this);
+
+        recognizer.startContinuousRecognitionAsync();
+
+      }
+
+      return [ws, editor, data.id];
+    }
+
+
+    function holdRecognized(s, e) {
+      speechRecognizedText += e.result.text != undefined ? e.result.text + "\r\n" : "";
+      speechDisplayArea.value = speechRecognizedText;
+    }
+
+    function recognizerCallback(s, e) {
+      speechDisplayArea.value = e.result.text != undefined ? speechRecognizedText + " " + e.result.text : speechRecognizedText;
+      speechDisplayArea.scrollTop = speechDisplayArea.scrollHeight;
+      webSocket.send(JSON.stringify({
+        type: 'sendToGroup',
+        group: sessionId,
+        dataType: 'json',
+        data: {
+          type: 'speech',
+          content: speechDisplayArea.value
+        }
+      }));
+    };
+
+    function joinGroup(ws, group) {
+      ws.send(JSON.stringify({
+        type: 'joinGroup',
+        group: group,
+        ackId: 1
+      }));
+    }
+
+    function sendToGroup(ws, group, data) {
+      ws.send(JSON.stringify({
+        type: 'sendToGroup',
+        group: group,
+        dataType: 'json',
+        data: data
+      }));
+    }
+
+    function stopStream() {
+      recognizer.stopContinuousRecognitionAsync(function () {
+        recognizer.close();
+        recognizer = undefined;
+      }, function (err) {
+        recognizer.close();
+        recognizer = undefined;
+      })
+    }
+
+    async function startStream() {      
+      let [ws, editor, id] = await initialize('/negotiate', true);
+      let changes = [];
+      let content = '';
+      let version = 0;
+      function flush() {
+        if (changes.length === 0) return;
+        sendToGroup(ws, id, {
+          type: 'delta',
+          version: version++,
+          changes: changes
+        });
+        changes = [];
+        content = editor.getValue();
+      }
+
+      setTimeout(ws.onopen = () => {
+        updateStatus('Connected');
+        setInterval(() => flush(), 200);
+        joinGroup(ws, `${id}-control`);
+        editor.on('change', e => changes.push(e));
+        editor.setReadOnly(false);
+      }, 1000);
+
+      ws.onmessage = e => {
+        let data = JSON.parse(e.data);
+        if (data.data === 'sync') sendToGroup(ws, id, {
+          type: 'full',
+          version: version,
+          content: content
+        });
+      }
+    }
+
+    async function onStartSession() {
+      document.getElementById('startBtn').disabled = true;
+      document.getElementById('stopBtn').disabled = false;
+      speechDisplayArea.style.display = "block";
+      editorDisplayArea.style.display = "block";
+      startStream();
+    }
+
+    async function onJoinSession() {
+      document.getElementById('joinBtn').disabled = true;
+      document.getElementById('leaveBtn').disabled = false;
+      speechDisplayArea.style.display = "block";
+      editorDisplayArea.style.display = "block";
+      updateStatus('Connected');
+      watch(location.hash.slice(1));
+    }
+
+    async function onLeaveSession() {
+      document.getElementById('joinBtn').disabled = true;
+      document.getElementById('leaveBtn').disabled = false;
+      speechDisplayArea.style.display = "none";
+      editorDisplayArea.style.display = "none";
+      updateStatus('Disconnected');
+    }
+
+    async function onStopSession() {
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('stopBtn').disabled = true;
+      speechDisplayArea.style.display = "none";
+      editorDisplayArea.style.display = "none";
+      updateStatus('Disconnected');
+      stopStream();
+    }
+
+    async function watch(id) {
+      let version = -1;
+      let [ws, editor] = await initialize(`/negotiate?id=${id}`, false)
+      ws.onopen = () => {
+        joinGroup(ws, id);
+      };
+
+      ws.onmessage = e => {
+        let data = JSON.parse(e.data);
+        if (data.type === 'ack' && data.success) sendToGroup(ws, `${id}-control`, 'sync');
+        else if (data.type === 'message') {
+          switch (data.data.type) {
+            case 'delta':
+              if (data.data.version !== version + 1)
+                data.data.changes.forEach(c => editor.getSession().getDocument().applyDelta(c));
+              version = data.data.version;
+              break;
+            case 'full':
+              if (version >= data.data.version) break;
+              editor.setValue(data.data.content);
+              version = data.data.version;
+              break;
+            case 'speech':
+              if (version >= data.data.version) break;
+              speechDisplayArea.value = data.data.content;
+              speechDisplayArea.scrollTop = speechDisplayArea.scrollHeight;
+              version = data.data.version;
+              break;
+          }
+        }
+      }
+    }
+
+    if (location.hash.slice(1)) {
+      updateAudienceStatus('Connected');
+    }
+    else {
+      updateSpeakerStatus('Connected');
+    }
+
+    if (!!window.SpeechSDK) {
+      SpeechSDK = window.SpeechSDK;
+    }    
+  </script>
+</body>
+
+</html>
