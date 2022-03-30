@@ -24,7 +24,7 @@ app.get('/azmapstoken', async (req, res) => {
   
   const headers = {
     headers: {
-      'Referer':'https://wonderful-river-07ec3e210.1.azurestaticapps.net/'
+      'Referer':'https://cosmic-azpark.azurewebsites.net/'
     }
   };
 

@@ -18,7 +18,7 @@ namespace azlearn.cosmic.API
     {
         private readonly ILogger<FxAzureMap> _logger;
 
-        private static readonly string[] allowd = { "https://wonderful-river-07ec3e210.1.azurestaticapps.net/",
+        private static readonly string[] allowd = { "https://cosmic-azpark.azurewebsites.net/",
                                                     "http://localhost"};
 
         public FxAzureMap(ILogger<FxAzureMap> log)
@@ -34,13 +34,13 @@ namespace azlearn.cosmic.API
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
-            /*string referer = req.Headers["Referer"];
+            string referer = req.Headers["Referer"];
             if (string.IsNullOrEmpty(referer))
                return new UnauthorizedResult();
 
             string result = Array.Find(allowd, site => referer.StartsWith(site, StringComparison.OrdinalIgnoreCase));
-            if (string.IsNullOrEmpty(result))
-               return new UnauthorizedResult();*/
+         if (string.IsNullOrEmpty(result))
+               return new UnauthorizedResult();
 
             var tokenCredential = new DefaultAzureCredential();
             var accessToken = await tokenCredential.GetTokenAsync(
