@@ -98,7 +98,7 @@
     let sessionId;
     var map, geolocationControl;
 
-         function GetMap() {            
+        function GetMap() {            
             map = new atlas.Map("globeView", {
                 view: 'Auto',                
                 authOptions: {                    
@@ -113,7 +113,7 @@
                           'Referer':'https://wonderful-river-07ec3e210.1.azurestaticapps.net/'
                         }});
                       console.log("token",res);
-                      let data = await res.json();  
+                      let data = await res.text();  
                       console.log("token text",data);
                       return resolve(data);                     
                     }
