@@ -98,7 +98,7 @@
     let sessionId;
     var map, geolocationControl;
 
-        function GetMap() {            
+         function GetMap() {            
             map = new atlas.Map("globeView", {
                 view: 'Auto',                
                 authOptions: {                    
@@ -106,7 +106,7 @@
                     clientId: 'd0e4165a-a456-4cb0-8862-96d5a21e01f6',
                     //authType:'subscriptionKey',
                     //subscriptionKey:'vZWbTX24nzFpth4LZSJLKQK2D4IPrF8M6yuMlpWz_8E',
-                    getToken: function (resolve, reject, map) {                                                
+                    getToken: async function (resolve, reject, map) {                                                
                       let res = await fetch("https://func-cosmic.azurewebsites.net/api/azureMapsToken", {method:'GET', 
                         mode: 'no-cors',
                         headers: {
