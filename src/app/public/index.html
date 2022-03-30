@@ -360,14 +360,7 @@
       }
     }
 
-    if (location.hash.slice(1)) {
-      updateAudienceStatus('Connected');
-    }
-    else {
-      updateSpeakerStatus('Connected');
-    }
-
-    if (!!window.SpeechSDK) {
+      if (!!window.SpeechSDK) {
       SpeechSDK = window.SpeechSDK;
     }    
   </script>
