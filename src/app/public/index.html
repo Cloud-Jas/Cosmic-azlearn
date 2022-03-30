@@ -235,10 +235,13 @@
                     position: 'top-right'
                 });
             });
-            setMapToUserLocation();
+            setTimeout(setMapToUserLocation,6000);
         }
         function setMapToUserLocation() {    
     navigator.geolocation.getCurrentPosition(function(position) {
+
+      console.log("latitude",position.coords.latitude);
+      console.log("longitude",position.coords.longitude);
         
         map.setCamera({
           
