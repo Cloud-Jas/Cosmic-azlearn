@@ -107,18 +107,15 @@
                     //authType:'subscriptionKey',
                     //subscriptionKey:'vZWbTX24nzFpth4LZSJLKQK2D4IPrF8M6yuMlpWz_8E',
                     getToken: function (resolve, reject, map) {                                                
-                        fetch("https://func-cosmic.azurewebsites.net/api/azureMapsToken", {method:'GET', 
+                      let res = await fetch("https://func-cosmic.azurewebsites.net/api/azureMapsToken", {method:'GET', 
                         mode: 'no-cors',
                         headers: {
                           'Referer':'https://wonderful-river-07ec3e210.1.azurestaticapps.net/'
-                        }}).then(r => 
-                        {
-                          console.log(r);
-                        r.text();
-                      }).then(token => {
-                          console.log(token);
-                          resolve(token)
-                        });
+                        }});
+                      console.log("token",res);
+                      let data = await res.json();  
+                      console.log("token text",data);
+                      return resolve(data);                     
                     }
                 }
             });
