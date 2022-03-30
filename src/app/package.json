@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  "scripts": {    
+  "scripts": {
     "build": "npm install",
     "start": "node server \"Endpoint=https://speechtranscriptortool.webpubsub.azure.com;AccessKey=l+KxvwmXMboiyzLzFm0UOeu4h5Cs2KPaUG6sb75GJJ0=;Version=1.0;\" \"77be1b9541514aacb97db28f6b27b7ce\" \"centralindia\""
   },
@@ -14,6 +14,7 @@
     "@azure/web-pubsub": "^1.0.0-alpha.20211102.4",
     "@azure/web-pubsub-express": "^1.0.0-alpha.20211102.4",
     "axios": "^0.24.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1"
   }
 }
