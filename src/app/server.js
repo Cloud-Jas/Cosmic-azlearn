@@ -21,7 +21,8 @@ app.get('/negotiate', async (req, res) => {
 const cors=require("cors");
 const corsOptions ={
    origin:'*', 
-   credentials:true,            //access-control-allow-credentials:true
+   credentials:true,         
+   preflightContinue: false,    
    optionSuccessStatus:200,
 }
 
