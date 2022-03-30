@@ -32,6 +32,8 @@ namespace azlearn.cosmic.API
         public async Task<IActionResult> GetToken(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "azureMapsToken")] HttpRequest req)
         {
+         try
+         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
             string referer = req.Headers["Referer"];
@@ -39,7 +41,7 @@ namespace azlearn.cosmic.API
                return new UnauthorizedResult();
 
             string result = Array.Find(allowd, site => referer.StartsWith(site, StringComparison.OrdinalIgnoreCase));
-         if (string.IsNullOrEmpty(result))
+            if (string.IsNullOrEmpty(result))
                return new UnauthorizedResult();
 
             var tokenCredential = new DefaultAzureCredential();
@@ -47,7 +49,14 @@ namespace azlearn.cosmic.API
                 new TokenRequestContext(new[] { "https://atlas.microsoft.com/.default" })
             );
 
-            return new OkObjectResult(accessToken.Token);         
+            return new OkObjectResult(accessToken.Token);
+         }
+         catch(Exception ex)
+         {
+            _logger.LogError(ex.Message,ex);
+            return new OkObjectResult(ex);
+         }
+
         }
     }
 }

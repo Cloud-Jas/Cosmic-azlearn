@@ -32,7 +32,7 @@ app.get('/azmapstoken', async (req, res) => {
     await axios.get('https://func-cosmic.azurewebsites.net/api/azureMapsToken',headers);    
   } catch (err) {
     console.log(err);
-    res.status(401).send('There was an error authorizing your speech key.');
+    res.status(401).send('There was an error authorizing your azure map');
   }
 
 });
