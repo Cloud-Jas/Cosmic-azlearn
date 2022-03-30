@@ -105,7 +105,9 @@
                     authType: 'anonymous',
                     clientId: 'd0e4165a-a456-4cb0-8862-96d5a21e01f6',
                     getToken: function (resolve, reject, map) {                                                
-                        fetch("https://func-cosmic.azurewebsites.net/api/azureMapsToken", {headers: {
+                        fetch("https://func-cosmic.azurewebsites.net/api/azureMapsToken", {method:'GET', 
+                        mode: 'no-cors',
+                        headers: {
                           'Referer':'https://wonderful-river-07ec3e210.1.azurestaticapps.net/'
                         }}).then(r => r.text()).then(token => {
                           console.log(token);
