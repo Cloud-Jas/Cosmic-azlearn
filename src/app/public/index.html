@@ -106,10 +106,11 @@
                     clientId: 'd0e4165a-a456-4cb0-8862-96d5a21e01f6',
                     //authType:'subscriptionKey',
                     //subscriptionKey:'vZWbTX24nzFpth4LZSJLKQK2D4IPrF8M6yuMlpWz_8E',
-                    getToken: async function (resolve, reject, map) {                                                
+                    getToken: async function (resolve, reject, map) {                                                                      
                       let res = await fetch("https://func-cosmic.azurewebsites.net/api/azureMapsToken", {method:'GET',                       
+                      mode:"cors",
                         headers: {
-                          'Referer':'https://wonderful-river-07ec3e210.1.azurestaticapps.net/'
+                          Referer:'https://wonderful-river-07ec3e210.1.azurestaticapps.net/'
                         }});
                       console.log("token",res);
                       let data = await res.text();  
