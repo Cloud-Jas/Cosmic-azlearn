@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
   <link href="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.css" rel="stylesheet" />
   <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.js"></script>
-  <script src="/src/app/lib/azure-maps-geolocation.min.js"></script>
+  <script src="azure-maps-geolocation.min.js" type="text/javascript"></script>
   <title>Cosmic-Azlearn</title>
   <style>
     #chatView {
@@ -111,7 +111,11 @@
                         mode: 'no-cors',
                         headers: {
                           'Referer':'https://wonderful-river-07ec3e210.1.azurestaticapps.net/'
-                        }}).then(r => r.text()).then(token => {
+                        }}).then(r => 
+                        {
+                          console.log(r);
+                        r.text();
+                      }).then(token => {
                           console.log(token);
                           resolve(token)
                         });
