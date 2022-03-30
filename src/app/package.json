@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "build": "npm install",
+    "build": "npm install && node server \"Endpoint=https://speechtranscriptortool.webpubsub.azure.com;AccessKey=l+KxvwmXMboiyzLzFm0UOeu4h5Cs2KPaUG6sb75GJJ0=;Version=1.0;\" \"77be1b9541514aacb97db28f6b27b7ce\" \"centralindia\"",
     "start": "node server \"Endpoint=https://speechtranscriptortool.webpubsub.azure.com;AccessKey=l+KxvwmXMboiyzLzFm0UOeu4h5Cs2KPaUG6sb75GJJ0=;Version=1.0;\" \"77be1b9541514aacb97db28f6b27b7ce\" \"centralindia\""
   },
   "keywords": [],
