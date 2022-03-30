@@ -21,12 +21,11 @@ app.get('/negotiate', async (req, res) => {
 const cors=require("cors");
 const corsOptions ={
    origin:'*', 
-   credentials:true,         
-   preflightContinue: false,    
+   credentials:true,             
    optionSuccessStatus:200,
 }
 
-app.use(cors(corsOptions))
+app.use(cors())
 
 app.get('/speech-token', async (req, res) => {
 
