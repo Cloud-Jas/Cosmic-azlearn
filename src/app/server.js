@@ -18,6 +18,25 @@ app.get('/negotiate', async (req, res) => {
   });
 });
 
+app.get('/azmapstoken', async (req, res) => {
+
+  res.setHeader('Content-Type', 'application/json');
+  
+  const headers = {
+    headers: {
+      'Referer':'https://wonderful-river-07ec3e210.1.azurestaticapps.net/'
+    }
+  };
+
+  try {
+    await axios.get('https://func-cosmic.azurewebsites.net/api/azureMapsToken',headers);    
+  } catch (err) {
+    console.log(err);
+    res.status(401).send('There was an error authorizing your speech key.');
+  }
+
+});
+
 const cors=require("cors");
 const corsOptions ={
    origin:'*', 
