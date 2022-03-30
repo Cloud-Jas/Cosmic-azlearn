@@ -34,13 +34,13 @@ namespace azlearn.cosmic.API
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
-            string referer = req.Headers["Referer"];
+            /*string referer = req.Headers["Referer"];
             if (string.IsNullOrEmpty(referer))
                return new UnauthorizedResult();
 
             string result = Array.Find(allowd, site => referer.StartsWith(site, StringComparison.OrdinalIgnoreCase));
             if (string.IsNullOrEmpty(result))
-               return new UnauthorizedResult();
+               return new UnauthorizedResult();*/
 
             var tokenCredential = new DefaultAzureCredential();
             var accessToken = await tokenCredential.GetTokenAsync(
