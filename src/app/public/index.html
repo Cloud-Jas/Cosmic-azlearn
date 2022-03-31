@@ -172,14 +172,29 @@
       </div>
     </div>
   </nav>
+  <div class="modal fade" id="inputName" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Please input your name</h5>
+        </div>
+        <div class="modal-body">
+          <input id="username" class="form-control" type="text" placeholder="Your name" v-model="name"
+            v-on:keypress.enter="setName">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" v-bind:disabled="!name" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div style="overflow: hidden;">
     <div id="globeView" class="col"></div>
     <div id="chatView" class="col"></div>
   </div>
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/ace.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>  
   <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
   <script>
 

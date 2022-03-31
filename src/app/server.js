@@ -70,5 +70,4 @@ app.get('/speech-token', async (req, res) => {
 });
 
 app.use(express.static('public'));
-app.use("/",express.static('public/index.html'));
 app.listen(8080, () => console.log('app started'));
