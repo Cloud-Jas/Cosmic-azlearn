@@ -1130,7 +1130,19 @@ function setAciveChat(f) {
         }
       }
     }
+    async function getUserInfo() {
+            const response = await fetch('/.auth/me');
+            const user = await response.json();
+            console.log(user);
 
+            if(user==null || user.clientPrincipal==null)
+            window.location="/.auth/login/github"
+
+        }
+
+      getUserInfo();
+
+      
       if (!!window.SpeechSDK) {
       SpeechSDK = window.SpeechSDK;
     }    
