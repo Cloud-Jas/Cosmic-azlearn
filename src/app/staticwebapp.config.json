@@ -1,0 +1,20 @@
+{
+    "routes": [ 
+        {
+          "route": "/api/*",
+          "methods": ["GET","PUT", "POST", "PATCH", "DELETE"],
+          "allowedRoles": ["authenticated"]
+        },
+        {
+          "route": "/login",
+          "rewrite": "/.auth/login/github"
+        },
+        {
+          "route": "/logout",
+          "redirect": "/.auth/logout"
+        }
+      ],
+    "navigationFallback": {
+        "rewrite": "/index.html"
+    }
+}
