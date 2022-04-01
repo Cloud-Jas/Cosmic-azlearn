@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AzureFunctions.Extensions.Middleware;
+using AzureFunctions.Extensions.Middleware.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -17,10 +19,12 @@ namespace CosmicChat.API
    public class FxUser
    {
       private readonly ILogger<FxUser> _logger;
+      private readonly IMiddlewareBuilder _middlewareBuilder;
 
-      public FxUser(ILogger<FxUser> log)
+      public FxUser(ILogger<FxUser> log, IMiddlewareBuilder middlewareBuilder)
       {
          _logger = log;
+         _middlewareBuilder = middlewareBuilder;
       }
 
       [FunctionName("FxUser")]
@@ -31,29 +35,32 @@ namespace CosmicChat.API
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users")] HttpRequest req,          
           [CosmosDB(databaseName:"CosmicDB",containerName:"CosmicUsers",Connection ="CosmicDBIdentity")] IEnumerable<dynamic> users,ClaimsPrincipal claimsPrincipal)
       {
-         _logger.LogInformation("C# HTTP trigger function processed a request.");
-
-         if (claimsPrincipal.Identity.IsAuthenticated)
+         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
          {
-            try
+            _logger.LogInformation("C# HTTP trigger function processed a request.");
+
+            if (claimsPrincipal.Identity.IsAuthenticated)
             {
-               //var response = await _sessionRepository.GetAllUsers();
+               try
+               {
+                  //var response = await _sessionRepository.GetAllUsers();
 
-               return new OkObjectResult(users);
+                  return new OkObjectResult(users);
+               }
+               catch (Exception ex)
+               {
+                  _logger.LogError($"Get all Users failed : { ex }");
+
+                  return new NotFoundResult();
+               }
             }
-            catch (Exception ex)
+            else
             {
-               _logger.LogError($"Get all Users failed : { ex }");
+               _logger.LogError("UnAuthorized access to Get all sessions trigger");
 
-               return new NotFoundResult();
+               return new UnauthorizedResult();
             }
-         }
-         else
-         {
-            _logger.LogError("UnAuthorized access to Get all sessions trigger");
-
-            return new UnauthorizedResult();
-         }
+         }));
       }
    }
 }
