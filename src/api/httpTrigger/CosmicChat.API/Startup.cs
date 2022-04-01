@@ -55,7 +55,7 @@ namespace CosmicChat.API
                       new DefaultAzureCredential((builder.GetContext().EnvironmentName.Equals("Development", StringComparison.OrdinalIgnoreCase) ?
                       new DefaultAzureCredentialOptions
                       {
-                         VisualStudioTenantId = "c2b23a58-3616-4072-8364-ea16b858ca6b" // Replace with your Tenant ID 
+                         VisualStudioTenantId = "d787514b-d3f2-45ff-9bf1-971fb473fc85" // Replace with your Tenant ID 
                       } : new DefaultAzureCredentialOptions())))
                          .Select("*")
                          .ConfigureRefresh(refresh =>
@@ -68,7 +68,7 @@ namespace CosmicChat.API
                             kv.SetCredential(new DefaultAzureCredential(builder.GetContext().EnvironmentName.Equals("Development", StringComparison.OrdinalIgnoreCase)
                                ? new DefaultAzureCredentialOptions
                                {
-                                  VisualStudioTenantId = "c2b23a58-3616-4072-8364-ea16b858ca6b" // Replace with your Tenant ID 
+                                  VisualStudioTenantId = "d787514b-d3f2-45ff-9bf1-971fb473fc85" // Replace with your Tenant ID 
                                } : new DefaultAzureCredentialOptions()));
                          });
              });
