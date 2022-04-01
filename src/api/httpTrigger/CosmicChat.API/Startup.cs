@@ -60,7 +60,7 @@ namespace CosmicChat.API
                          .Select("*")
                          .ConfigureRefresh(refresh =>
                          {
-                            refresh.Register("CleanAzFunc:Version", refreshAll: true);
+                            refresh.Register("CosmicChat:Version", refreshAll: true);
                             refresh.SetCacheExpiration(TimeSpan.FromSeconds(10));
                          })
                          .ConfigureKeyVault(kv =>
