@@ -1136,12 +1136,23 @@ function setAciveChat(f) {
             console.log(user);
 
             if(user==null || user.clientPrincipal==null)
+            {
             window.location.href="/.auth/login/github"
-
+            }
+            else
+            {
+            getAllUsers();
+            }
         }
 
-      getUserInfo();
+     async function getAllUsers()
+     {
+       const response= await fetch('/api/users');
+       const users=await response.json();
+       console.log(users);
+     }   
 
+      getUserInfo();      
       
       if (!!window.SpeechSDK) {
       SpeechSDK = window.SpeechSDK;
