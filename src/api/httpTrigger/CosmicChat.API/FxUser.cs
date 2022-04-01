@@ -29,12 +29,12 @@ namespace CosmicChat.API
       [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
       public async Task<IActionResult> GetUsers(
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users")] HttpRequest req,          
-          [CosmosDB(databaseName:"CosmicDB",containerName:"CosmicUsers",Connection ="CosmicDBIdentity")] IEnumerable<dynamic> users)
+          [CosmosDB(databaseName:"CosmicDB",containerName:"CosmicUsers",Connection ="CosmicDBIdentity")] IEnumerable<dynamic> users,ClaimsPrincipal claimsPrincipal)
       {
          _logger.LogInformation("C# HTTP trigger function processed a request.");
 
-       //  if (claimsPrincipal.Identity.IsAuthenticated)
-        // {
+         if (claimsPrincipal.Identity.IsAuthenticated)
+         {
             try
             {
                //var response = await _sessionRepository.GetAllUsers();
@@ -47,13 +47,13 @@ namespace CosmicChat.API
 
                return new NotFoundResult();
             }
-        // }
-        // else
-        // {
-        //    _logger.LogError("UnAuthorized access to Get all sessions trigger");
+         }
+         else
+         {
+            _logger.LogError("UnAuthorized access to Get all sessions trigger");
 
-         //   return new UnauthorizedResult();
-         //}
+            return new UnauthorizedResult();
+         }
       }
    }
 }
