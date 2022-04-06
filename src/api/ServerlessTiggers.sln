@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmicChat.API", "httpTrigger\CosmicChat.API\CosmicChat.API.csproj", "{E591B00A-CE39-490A-A891-CF17D4FD21AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmicChat.API", "httpTrigger\CosmicChat.API\CosmicChat.API.csproj", "{E591B00A-CE39-490A-A891-CF17D4FD21AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmicChat.ComosDB.ChangeFeed", "cosmosTrigger\CosmicChat.ComosDB.ChangeFeed\CosmicChat.ComosDB.ChangeFeed.csproj", "{85021784-6A4B-4F30-A4C2-4E58820A7071}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmicChat.ComosDB.ChangeFeed", "cosmosTrigger\CosmicChat.ComosDB.ChangeFeed\CosmicChat.ComosDB.ChangeFeed.csproj", "{85021784-6A4B-4F30-A4C2-4E58820A7071}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
