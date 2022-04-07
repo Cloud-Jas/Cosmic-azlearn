@@ -15,7 +15,7 @@ using AzureFunctions.Extensions.Middleware.Abstractions;
 using AzureFunctions.Extensions.Middleware;
 using System.Net.Http;
 using Microsoft.Extensions.Options;
-using CosmicChat.API.Models;
+using CosmicChat.Shared.Models;
 
 namespace azlearn.cosmic.API
 {

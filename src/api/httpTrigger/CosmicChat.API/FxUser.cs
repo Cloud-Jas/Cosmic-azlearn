@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AzureFunctions.Extensions.Middleware;
 using AzureFunctions.Extensions.Middleware.Abstractions;
-using CosmicChat.API.Models;
+using CosmicChat.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;

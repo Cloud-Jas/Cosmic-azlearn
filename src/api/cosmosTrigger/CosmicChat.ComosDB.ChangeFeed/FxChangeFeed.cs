@@ -1,4 +1,4 @@
-﻿using CosmicChat.API.Models;
+﻿using CosmicChat.Shared.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System;
@@ -17,7 +17,7 @@ namespace CosmicChat.API
          _logger = logger;
       }
       [FunctionName("CosmosDBTrigger")]
-      public static void CosmosDBTrigger([CosmosDBTrigger(
+      public async Task CosmosDBTrigger([CosmosDBTrigger(
             databaseName: "CosmicDB",
             containerName: "CosmicUsers",
             Connection = "CosmicDBIdentity",
@@ -27,8 +27,8 @@ namespace CosmicChat.API
       {
          if (input != null && input.Count > 0)
          {
-            log.LogInformation("Documents modified " + input.Count);
-            log.LogInformation("First document Id " + input[0].name);
+            _logger.LogInformation("Documents modified " + input.Count);
+            _logger.LogInformation("First document Id " + input[0].name);
          }
       }
    }

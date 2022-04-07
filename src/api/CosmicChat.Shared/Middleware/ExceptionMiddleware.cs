@@ -2,44 +2,39 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace CosmicChat.API.Middleware
+namespace CosmicChat.Shared.Middleware
 {
-   public class ClaimsCheckMiddleware : ServerlessMiddleware
+   public class ExceptionMiddleware : ServerlessMiddleware
    {
       private readonly ILogger _logger;
-      public ClaimsCheckMiddleware(ILogger logger)
+      public ExceptionMiddleware(ILogger logger)
       {
          _logger = logger;
       }
 
       public override async Task InvokeAsync(HttpContext httpContext)
       {
-
-         var claimsPrincipal = httpContext.User;
-
-         if (claimsPrincipal.Identity.IsAuthenticated)
+         try
          {
             await Next.InvokeAsync(httpContext);
          }
-         else
+         catch(Exception ex)
          {
+            _logger.LogError("Exception occured", ex.Message);
+
             httpContext.Response.ContentType = "application/json";
 
-            httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
             await httpContext.Response.WriteAsync(new
             {
                StatusCode = httpContext.Response.StatusCode,
-               Message = "User is not authorized to access this endpoint"
+               Message = ex.Message
             }.ToString());
          }
-
       }
    }
 }

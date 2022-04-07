@@ -1,8 +1,8 @@
 ﻿using Azure.Identity;
 using AzureFunctions.Extensions.Middleware.Abstractions;
 using AzureFunctions.Extensions.Middleware.Infrastructure;
-using CosmicChat.API.Middleware;
-using CosmicChat.API.Models;
+using CosmicChat.Shared.Middleware;
+using CosmicChat.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
@@ -97,7 +97,7 @@ namespace CosmicChat.API
             var funcBuilder = new MiddlewareBuilder(sp.GetRequiredService<IHttpContextAccessor>());
 
             funcBuilder.Use(new ExceptionMiddleware(new LoggerFactory().CreateLogger(nameof(ExceptionMiddleware))));
-            //funcBuilder.Use(new ClaimsCheckMiddleware(new LoggerFactory().CreateLogger(nameof(ClaimsCheckMiddleware))));
+            funcBuilder.Use(new ClaimsCheckMiddleware(new LoggerFactory().CreateLogger(nameof(ClaimsCheckMiddleware))));
             funcBuilder.Use(new AzureAppConfigurationRefreshMiddleware(new LoggerFactory().CreateLogger(nameof(ExceptionMiddleware)), 
                sp.GetRequiredService<IConfigurationRefresherProvider>()));
 

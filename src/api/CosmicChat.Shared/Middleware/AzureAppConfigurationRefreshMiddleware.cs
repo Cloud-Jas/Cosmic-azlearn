@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CosmicChat.API.Middleware
+namespace CosmicChat.Shared.Middleware
 {
    public class AzureAppConfigurationRefreshMiddleware : ServerlessMiddleware
    {
