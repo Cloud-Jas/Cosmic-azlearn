@@ -90,23 +90,7 @@ namespace CosmicChat.API
 
 
          }));
-      }
-      [FunctionName("CosmosDBTrigger")]
-      public static void CosmosDBTrigger([CosmosDBTrigger(
-            databaseName: "CosmicDB",
-            containerName: "CosmicUsers",
-            Connection = "CosmicDBIdentity",
-            LeaseContainerName = "leasesCosmicUsers",
-            CreateLeaseContainerIfNotExists =true)]IReadOnlyList<User> input,
-            ILogger log)
-      {
-         if (input != null && input.Count > 0)
-         {
-            log.LogInformation("Documents modified " + input.Count);
-            log.LogInformation("First document Id " + input[0].name);
-         }
-      }
-
+      }      
       [FunctionName("GetAllUsers")]
       [OpenApiOperation(operationId: "GetAllUsers", tags: new[] { "name" })]
       [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
