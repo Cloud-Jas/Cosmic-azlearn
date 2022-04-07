@@ -51,7 +51,7 @@ namespace CosmicChat.API
 
                await usersCreate.AddAsync(user);
 
-               return new ObjectResult(user) { StatusCode=StatusCodes.Status201Created };
+               return new ObjectResult(user) { StatusCode = StatusCodes.Status201Created };
 
             }
             catch (Exception ex)
@@ -90,6 +90,21 @@ namespace CosmicChat.API
 
 
          }));
+      }
+      [FunctionName("CosmosDBTrigger")]
+      public static void CosmosDBTrigger([CosmosDBTrigger(
+            databaseName: "CosmicDB",
+            containerName: "CosmicUsers",
+            Connection = "CosmicDBIdentity",
+            LeaseContainerName = "leasesCosmicUsers",
+            CreateLeaseContainerIfNotExists =true)]IReadOnlyList<User> input,
+            ILogger log)
+      {
+         if (input != null && input.Count > 0)
+         {
+            log.LogInformation("Documents modified " + input.Count);
+            log.LogInformation("First document Id " + input[0].name);
+         }
       }
 
       [FunctionName("GetAllUsers")]
