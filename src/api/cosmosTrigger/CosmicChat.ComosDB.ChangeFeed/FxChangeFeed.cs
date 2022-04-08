@@ -37,7 +37,11 @@ namespace CosmicChat.CosmosDB.ChangeFeed
                Data = BinaryData.FromObjectAsJson(new
                {
                   latitude = input[0].address.position.latitude,
-                  longitude = input[0].address.position.longitude
+                  longitude = input[0].address.position.longitude,
+                  userId= input[0].id,
+                  userName=input[0].name,
+                  city=input[0].address.country.secondarySubDivision,
+                  state= input[0].address.country.subDivision
                }),
                DataType = WebPubSubDataType.Json
             });
