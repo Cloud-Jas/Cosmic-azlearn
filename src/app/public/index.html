@@ -10,7 +10,8 @@
   <link rel="stylesheet" href="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.css" type="text/css">
   <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.js"></script>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" type="text/css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -1229,9 +1230,11 @@
       ws.onmessage = e => {
         let data = JSON.parse(e.data);
 
-        if(e.data.from=="group" && e.data.data.userId!=currentUser.clientPrincipal.userId)
-        {
-          toastr.success(""+e.data.data.userName+" joined from "+e.data.data.city+","+e.data.data.state);
+        if (data.from == "group" && data.data.userId != currentUser.clientPrincipal.userId) {
+          console.log(data.from);
+          console.log(data.data.userId);
+          console.log(currentUser.clientPrincipal.userId);
+          toastr.success("" + data.data.userName + " is online from " + data.data.city + "," + data.data.state);
         }
 
         console.log("websocket message", data);
