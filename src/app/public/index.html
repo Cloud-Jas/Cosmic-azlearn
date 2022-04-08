@@ -839,6 +839,15 @@
               <a href="javascript:;" class="write-link send"></a>
             </div>
           </div>
+          <div class="container" style="border: 1px solid var(--light);width:70%;left:130%">
+            <ul>
+              <li>
+                <div
+                  style="background-color: var(--blue);border-radius: 5px; padding: 13px 14px;margin-top: 10px; height:20px; margin-bottom:8px;border: 1px solid var(--light);">
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -916,17 +925,6 @@
 
         var latitude = position.coords.latitude;
         var longitude = position.coords.longitude;
-
-        map.setCamera({
-
-          center: [longitude, latitude],
-          zoom: 11 + 1
-        });
-        var marker = new atlas.HtmlMarker({
-          htmlContent: "<div><div class='pin bounce'></div><div class='pulse'></div></div>",
-          position: [longitude, latitude]
-        });
-        map.markers.add(marker);
         upsertUser(latitude, longitude);
       }, function (error) {
         switch (error.code) {
@@ -1214,6 +1212,11 @@
         })
       });
 
+
+      //update markers
+
+      await updateMapMarkers(addressLookup.addresses[0].address.countryCode);
+
       //get websocket connection
       var connection = await fetch('/api/pubsub/connection');
       let data = await connection.json();
@@ -1235,6 +1238,7 @@
           console.log(data.data.userId);
           console.log(currentUser.clientPrincipal.userId);
           toastr.success("" + data.data.userName + " is online from " + data.data.city + "," + data.data.state);
+          updateMapMarkers(addressLookup.addresses[0].address.countryCode);
         }
 
         console.log("websocket message", data);
@@ -1271,12 +1275,43 @@
             position: 'top-right'
           });
         });
+
         setTimeout(setMapToUserLocation, 2000);
       }
     }
 
+
+    async function updateMapMarkers(countryCode) {
+      let responseUsers = await getAllUsersByCountryCode(countryCode)
+      let locations = await responseUsers.json();
+
+      map.markers.clear();
+
+      locations.forEach(element => {
+        console.log(element);
+        var marker = new atlas.HtmlMarker({
+          htmlContent: "<div><div class='pin'></div><div class='pulse'></div></div>",
+          position: [element.address.position.longitude, element.address.position.latitude],
+          popup: new atlas.Popup({
+            content: '<div style="padding:10px">' + element.name + '</div>',
+            pixelOffset: [0, -30]
+          })
+        });
+        map.events.add('click', marker, () => {
+          marker.togglePopup();
+        });
+        map.markers.add(marker);
+      });
+    }
+
+
     async function getUserById(countryCode, userId) {
       const response = await fetch('/api/user/' + countryCode + '/' + userId);
+      return response;
+    }
+
+    async function getAllUsersByCountryCode(countryCode) {
+      const response = await fetch('/api/users/' + countryCode);
       return response;
     }
 
