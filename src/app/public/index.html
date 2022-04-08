@@ -1160,6 +1160,8 @@
 
       console.log('address lookup', addressLookup);
       var userResponse = await getUserById(addressLookup.addresses[0].address.countryCode, currentUser.clientPrincipal.userId);
+      
+      //validate user exists, if not upsert user
       if (userResponse.status == 204)
         await fetch('/api/user', {
           method: "POST",
@@ -1190,6 +1192,24 @@
       else
       {        
         console.log(await userResponse.json());
+      }
+
+      //get websocket connection
+      var connection= await fetch('/api/pubsub/connection');
+      let data = await connection.json();
+      console.log(data.url);
+
+      let ws = new WebSocket(data.url, 'json.webpubsub.azure.v1');
+      webSocket = ws;
+
+      setTimeout(ws.onopen = () => {
+        updateStatus('Connected');        
+        joinGroup(ws, `${addressLookup.addresses[0].address.countryCode}-location`);        
+      }, 1000);
+
+      ws.onmessage = e => {
+        let data = JSON.parse(e.data);
+        console.log("websocket message",data);
       }
     }
 

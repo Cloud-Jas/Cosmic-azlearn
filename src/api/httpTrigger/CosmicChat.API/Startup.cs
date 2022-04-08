@@ -90,6 +90,7 @@ namespace CosmicChat.API
 
 
          services.Configure<AzureMapConfiguration>(Configuration.GetSection("AzMap"));
+         services.Configure<WebPubSubOptions>(Configuration.GetSection("WebPubSub"));
 
          #region Middleware 
          services.AddTransient<IMiddlewareBuilder, MiddlewareBuilder>((sp) =>
