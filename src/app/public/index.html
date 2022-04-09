@@ -19,6 +19,7 @@
   <!-- Add a reference to the Azure Maps Services Module JavaScript file. -->
   <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas-service.min.js"></script>
   <script src="azure-maps-geolocation.min.js" type="text/javascript"></script>
+  
   <title>Cosmic-Azlearn</title>
   <style>
     #chatView {
@@ -925,6 +926,14 @@
 
         var latitude = position.coords.latitude;
         var longitude = position.coords.longitude;
+
+
+        map.setCamera({
+          center: [position.coords.longitude,position.coords.latitude],
+          zoom:10
+        })
+
+
         upsertUser(latitude, longitude);
       }, function (error) {
         switch (error.code) {
@@ -1230,15 +1239,17 @@
         joinGroup(ws, `${addressLookup.addresses[0].address.countryCode}-location`);
       }, 1000);
 
-      ws.onmessage = e => {
-        let data = JSON.parse(e.data);
+      ws.onmessage = async(e) => {
+        let data = JSON.parse(e.data);        
+        
+        if (data.from == "group")
+        await updateMapMarkers(addressLookup.addresses[0].address.countryCode);
 
         if (data.from == "group" && data.data.userId != currentUser.clientPrincipal.userId) {
           console.log(data.from);
           console.log(data.data.userId);
           console.log(currentUser.clientPrincipal.userId);
-          toastr.success("" + data.data.userName + " is online from " + data.data.city + "," + data.data.state);
-          updateMapMarkers(addressLookup.addresses[0].address.countryCode);
+          toastr.success("" + data.data.userName + " is online from " + data.data.city + "," + data.data.state);          
         }
 
         console.log("websocket message", data);
@@ -1276,10 +1287,9 @@
           });
         });
 
-        setTimeout(setMapToUserLocation, 2000);
+        setTimeout(setMapToUserLocation, 1000);
       }
-    }
-
+    }   
 
     async function updateMapMarkers(countryCode) {
       let responseUsers = await getAllUsersByCountryCode(countryCode)
@@ -1287,23 +1297,43 @@
 
       map.markers.clear();
 
+      var cosmosParkTemplate = {
+            title: '{name}',
+            content: '<div>' +
+                '<button id="startBtn" onclick="addChat({name})" type="button" style=" color: #fff;background-color: #20ad00;border-color: #20ad00;">Chat</button>' +                               
+                '<\div>',
+            singleDescription: false,
+            numberFormat: {
+                maximumFractionDigits: 2
+            },
+
+            //Since we trust the data being retrieve, don't sandbox the content so that we can use CSS classes.
+            sandboxContent: true
+        };      
+
       locations.forEach(element => {
         console.log(element);
         var marker = new atlas.HtmlMarker({
           htmlContent: "<div><div class='pin'></div><div class='pulse'></div></div>",
           position: [element.address.position.longitude, element.address.position.latitude],
           popup: new atlas.Popup({
-            content: '<div style="padding:10px">' + element.name + '</div>',
-            pixelOffset: [0, -30]
+            content: '<div style="padding:20px;">' +
+              '<div> <span>'+element.name+'</span></div>'+
+                '<button id="startBtn" onclick="addChat(\''+element.id+'\')" type="button" style=" color: #fff;background-color: #20ad00;border-color: #20ad00;margin-top:10px">Chat</button>' +                               
+                '<\div>'
           })
         });
+        console.log(marker);
         map.events.add('click', marker, () => {
           marker.togglePopup();
         });
         map.markers.add(marker);
-      });
+      });     
     }
-
+    function addChat(name)
+    {
+      console.log(name);
+    }
 
     async function getUserById(countryCode, userId) {
       const response = await fetch('/api/user/' + countryCode + '/' + userId);
