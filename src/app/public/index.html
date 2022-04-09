@@ -19,7 +19,7 @@
   <!-- Add a reference to the Azure Maps Services Module JavaScript file. -->
   <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas-service.min.js"></script>
   <script src="azure-maps-geolocation.min.js" type="text/javascript"></script>
-  
+
   <title>Cosmic-Azlearn</title>
   <style>
     #chatView {
@@ -841,13 +841,13 @@
             </div>
           </div>
           <div class="container" style="border: 1px solid var(--light);width:70%;left:130%">
-            <ul>
-              <li>
-                <div
-                  style="background-color: var(--blue);border-radius: 5px; padding: 13px 14px;margin-top: 10px; height:20px; margin-bottom:8px;border: 1px solid var(--light);">
-                </div>
-              </li>
-            </ul>
+            <div style="
+            margin-top: -100%;
+            float: left;
+            height: 94%;
+            width: 100%;
+        ">
+            </div>
           </div>
         </div>
       </div>
@@ -929,8 +929,8 @@
 
 
         map.setCamera({
-          center: [position.coords.longitude,position.coords.latitude],
-          zoom:10
+          center: [position.coords.longitude, position.coords.latitude],
+          zoom: 10
         })
 
 
@@ -1239,17 +1239,17 @@
         joinGroup(ws, `${addressLookup.addresses[0].address.countryCode}-location`);
       }, 1000);
 
-      ws.onmessage = async(e) => {
-        let data = JSON.parse(e.data);        
-        
+      ws.onmessage = async (e) => {
+        let data = JSON.parse(e.data);
+
         if (data.from == "group")
-        await updateMapMarkers(addressLookup.addresses[0].address.countryCode);
+          await updateMapMarkers(addressLookup.addresses[0].address.countryCode);
 
         if (data.from == "group" && data.data.userId != currentUser.clientPrincipal.userId) {
           console.log(data.from);
           console.log(data.data.userId);
           console.log(currentUser.clientPrincipal.userId);
-          toastr.success("" + data.data.userName + " is online from " + data.data.city + "," + data.data.state);          
+          toastr.success("" + data.data.userName + " is online from " + data.data.city + "," + data.data.state);
         }
 
         console.log("websocket message", data);
@@ -1289,7 +1289,7 @@
 
         setTimeout(setMapToUserLocation, 1000);
       }
-    }   
+    }
 
     async function updateMapMarkers(countryCode) {
       let responseUsers = await getAllUsersByCountryCode(countryCode)
@@ -1298,18 +1298,18 @@
       map.markers.clear();
 
       var cosmosParkTemplate = {
-            title: '{name}',
-            content: '<div>' +
-                '<button id="startBtn" onclick="addChat({name})" type="button" style=" color: #fff;background-color: #20ad00;border-color: #20ad00;">Chat</button>' +                               
-                '<\div>',
-            singleDescription: false,
-            numberFormat: {
-                maximumFractionDigits: 2
-            },
+        title: '{name}',
+        content: '<div>' +
+          '<button id="startBtn" onclick="addChat({name})" type="button" style=" color: #fff;background-color: #20ad00;border-color: #20ad00;">Chat</button>' +
+          '<\div>',
+        singleDescription: false,
+        numberFormat: {
+          maximumFractionDigits: 2
+        },
 
-            //Since we trust the data being retrieve, don't sandbox the content so that we can use CSS classes.
-            sandboxContent: true
-        };      
+        //Since we trust the data being retrieve, don't sandbox the content so that we can use CSS classes.
+        sandboxContent: true
+      };
 
       locations.forEach(element => {
         console.log(element);
@@ -1318,9 +1318,9 @@
           position: [element.address.position.longitude, element.address.position.latitude],
           popup: new atlas.Popup({
             content: '<div style="padding:20px;">' +
-              '<div> <span>'+element.name+'</span></div>'+
-                '<button id="startBtn" onclick="addChat(\''+element.id+'\')" type="button" style=" color: #fff;background-color: #20ad00;border-color: #20ad00;margin-top:10px">Chat</button>' +                               
-                '<\div>'
+              '<div> <span>' + element.name + '</span></div>' +
+              '<button id="startBtn" onclick="addChat(\'' + element.id + '\')" type="button" style=" color: #fff;background-color: #20ad00;border-color: #20ad00;margin-top:10px">Chat</button>' +
+              '<\div>'
           })
         });
         console.log(marker);
@@ -1328,10 +1328,9 @@
           marker.togglePopup();
         });
         map.markers.add(marker);
-      });     
+      });
     }
-    function addChat(name)
-    {
+    function addChat(name) {
       console.log(name);
     }
 
