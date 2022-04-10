@@ -31,7 +31,7 @@
     .timer {
       font-family: sans-serif;
       display: inline-block;
-      padding: 24px 32px;
+      padding: 4px 10px;
       border-radius: 30px;
       background: white;
     }
@@ -209,12 +209,12 @@
 
     .check-mark:hover {
       border-color: linear-gradient(135deg, #55DDFF 0%, #C058F3 100%);
-      background: linear-gradient(135deg, #55DDFF 0%, #C058F3 100%);
+      background: var(--blue);
     }
 
     .check-mark.checked {
       background-color: pink;
-      background: linear-gradient(135deg, #55DDFF 0%, #C058F3 100%);
+      background: var(--blue);
     }
 
     .todo-text.checked {
@@ -251,7 +251,8 @@
     .todo-items-wrapper {
       margin-top: 30px;
       border-radius: 6px;
-      overflow: hidden;
+      overflow: auto;
+      height: 220px;      
       font-size: 16px;
       background-color: white;
       font-family: "sofia-pro", sans-serif;
@@ -907,7 +908,7 @@
 </head>
 
 <body onload="getUserInfo()">
-  <nav class="navbar navbar-expand navbar-light bg-light">
+  <nav class="navbar navbar-expand navbar-light bg-light" style="background-color: white !important;">
     <div id="online" style="display: none;" class="online-indicator">
       <span class="blink mr-2"></span>
     </div>
@@ -1134,12 +1135,13 @@
                     <div class="todo-item">
                       <div class="check">
                         <div class="check-mark checked">
-                          <img src="assets/icon-check.svg">
+                          <img src="icon-check.svg">
                         </div>
                       </div>
                       <div class="todo-text checked">
-                        Cut the lawn
+                        Cut the lawn                         
                       </div>
+                      <span style="color: #56b439;float:right;display:flex;align-items: center;">+2 Points</span>
                     </div>
                     <div class="todo-item">
                       <div class="check">
@@ -1390,12 +1392,6 @@
       });
       return false;
     }
-    function updateStreamId(id) {
-      let u = document.querySelector('#url');
-      let url = `${location.protocol}//${location.host}${location.pathname}#${id}`;
-      u.setAttribute('href', url);
-      u.textContent = url;
-    }
 
     function updateStatus(status) {
       var onlineDiv = document.getElementById('online');
@@ -1403,38 +1399,6 @@
         onlineDiv.style.display = "block";
       else
         onlineDiv.style.display = "none";
-    }
-    function updateSpeakerStatus(status) {
-      var audiencedashboard = document.getElementById('audienceDashboard');
-      var speakerDashboard = document.getElementById('speakerDashboard');
-
-
-      if (status == 'Connected') {
-        audiencedashboard.style.display = "none";
-        speakerDashboard.style.display = "block";
-        speechDisplayArea.readOnly = false;
-      }
-      else {
-        audiencedashboard.style.display = "block";
-        speakerDashboard.style.display = "none";
-        speechDisplayArea.readOnly = true;
-      }
-    }
-
-    function updateAudienceStatus(status) {
-      var audiencedashboard = document.getElementById('audienceDashboard');
-      var speakerDashboard = document.getElementById('speakerDashboard');
-
-      speechDisplayArea.readOnly = true;
-
-      if (status == 'Connected') {
-        audiencedashboard.style.display = "block";
-        speakerDashboard.style.display = "none";
-      }
-      else {
-        audiencedashboard.style.display = "none";
-        speakerDashboard.style.display = "block";
-      }
     }
 
     async function initialize(url, isSpeaker) {
