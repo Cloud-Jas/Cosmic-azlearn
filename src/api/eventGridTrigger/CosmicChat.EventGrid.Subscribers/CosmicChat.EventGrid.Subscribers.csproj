@@ -3,8 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Azure.Core" Version="1.24.0" />
+  <ItemGroup>    
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventGrid" Version="2.1.0" />
 	  <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
 	  <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.WebPubSub" Version="1.2.0" />
