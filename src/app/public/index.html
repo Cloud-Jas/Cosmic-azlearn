@@ -20,6 +20,8 @@
   <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas-service.min.js"></script>
   <script src="azure-maps-geolocation.min.js" type="text/javascript"></script>
 
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons" rel="stylesheet" />
+
   <title>Cosmic-Azlearn</title>
   <style>
     * {
@@ -27,6 +29,70 @@
       padding: 0;
       box-sizing: border-box;
     }
+
+    .match {
+      background-color: var(--color-bg-primary);
+      display: flex;
+      flex-direction: column;
+      min-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 0 2px 0 rgba(48, 48, 48, 0.1), 0 4px 4px 0 rgba(48, 48, 48, 0.1);
+    }
+
+    .match-header {
+      display: flex;
+      padding: 16px;
+      border-bottom: 2px solid rgba(48, 48, 48, 0.1);
+    }
+
+    .match-status {
+      background-color: var(--color-bg-alert);
+      color: var(--color-text-alert);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      line-height: 1;
+      margin-right: auto;
+    }
+
+    .match-status:before {
+      content: "";
+      display: block;
+      width: 6px;
+      height: 6px;
+      background-color: currentcolor;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .match-tournament {
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+    }
+
+    .match-tournament img {
+      width: 20px;
+      margin-right: 12px;
+    }
+
+    .match-actions {
+      display: flex;
+      margin-left: auto;
+    }
+
+    .btn-icon {
+      border: none;
+      background-color: transparent;
+      color: var(--color-text-icon);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
 
     .timer {
       font-family: sans-serif;
@@ -76,8 +142,7 @@
 
     header {
       background-color: var(--blue);
-      color: white;
-      text-transform: uppercase;
+      color: white;      
       border-top-left-radius: 1rem;
       border-top-right-radius: 1rem;
       height: 7rem;
@@ -252,7 +317,7 @@
       margin-top: 30px;
       border-radius: 6px;
       overflow: auto;
-      height: 220px;      
+      height: 220px;
       font-size: 16px;
       background-color: white;
       font-family: "sofia-pro", sans-serif;
@@ -450,6 +515,14 @@
       --light: #e6e6e6;
       --wrapper: 1000px;
       --blue: #00b0ff;
+      --color-text-primary: #1c2a38;
+      --color-text-secondary: #8A8F98;
+      --color-text-alert: #d72641;
+      --color-text-icon: #dbdade;
+      --color-bg-primary: #fff;
+      --color-bg-secondary: #f3f5f9;
+      --color-bg-alert: #fdeaec;
+      --color-theme-primary: #623ce6;
     }
 
     ul {
@@ -939,7 +1012,7 @@
     </div>
   </div>
   <div style="overflow: hidden;">
-    <div id="globeView" class="col"></div>    
+    <div id="globeView" class="col"></div>
     <div id="chatView" class="col">
       <div class="wrapper">
         <div class="container">
@@ -1131,6 +1204,17 @@
         ">
               <div class="todoContainer">
                 <div class="todo-items-wrapper">
+                  <div class="match">
+                    <div class="match-header">
+                      <div class="match-status">Live</div>
+                      <div class="match-tournament"><img src="cosmosdb.svg" />CosmosPark
+                        Premier League</div>
+                      <div class="match-actions">
+                        <button class="btn-icon"><i class="material-icons-outlined">grade</i></button>
+                        <button class="btn-icon"><i class="material-icons-outlined">add_alert</i></button>
+                      </div>
+                    </div>
+                  </div>
                   <div class="todo-items">
                     <div class="todo-item">
                       <div class="check">
@@ -1139,7 +1223,7 @@
                         </div>
                       </div>
                       <div class="todo-text checked">
-                        Cut the lawn                         
+                        Cut the lawn
                       </div>
                       <span style="color: #56b439;float:right;display:flex;align-items: center;">+2 Points</span>
                     </div>
@@ -1169,10 +1253,14 @@
             <div class="leaderboard" style="
             margin-top: -50%;
             float: left;
-            height: 78%;
+            height: 75%;
             width: 100%;">
               <header>
-                <h1>Leader Board</h1>
+                <h1>CosmosPark Leader Board</h1>
+                <img src="cosmosdb.svg" alt="" style="height: 10rem;
+                position: absolute;
+                bottom: 0;
+                right: 1rem;">
                 <nav>
                   <a href="" class="active">7-days</a>
                   <a href="">30-days</a>
@@ -1250,19 +1338,19 @@
           reset: root.querySelector(".timer__btn--reset")
         };
 
-        this.interval = null;        
+        this.interval = null;
         this.remainingSeconds = 60 * 60;
-        this.start();                  
+        this.start();
       }
 
       updateInterfaceTime() {
         const minutes = Math.floor(this.remainingSeconds / 60);
-        const seconds = this.remainingSeconds % 60;        
+        const seconds = this.remainingSeconds % 60;
 
         this.el.minutes.textContent = minutes.toString().padStart(2, "0");
         this.el.seconds.textContent = seconds.toString().padStart(2, "0");
-      }     
-      
+      }
+
 
       start() {
         if (this.remainingSeconds === 0) return;
@@ -1275,14 +1363,14 @@
             this.stop();
           }
         }, 1000);
-        
+
       }
 
       stop() {
         clearInterval(this.interval);
 
         this.interval = null;
-        
+
       }
 
       static getHTML() {
