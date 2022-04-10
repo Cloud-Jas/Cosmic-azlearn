@@ -1,8 +1,11 @@
-﻿using CosmicChat.Shared.Models;
+﻿using Azure.Messaging;
+using CosmicChat.Shared.Models;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Microsoft.Azure.WebJobs.Extensions.WebPubSub;
 using Microsoft.Azure.WebPubSub.Common;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -23,7 +26,7 @@ namespace CosmicChat.CosmosDB.ChangeFeed
             containerName: "CosmicUsers",
             Connection = "CosmicDBIdentity",
             LeaseContainerName = "leasesCosmicUsers",
-            CreateLeaseContainerIfNotExists =true)]IReadOnlyList<User> input, [WebPubSub(Hub = "CosmosPark")] IAsyncCollector<WebPubSubAction> operation)
+            CreateLeaseContainerIfNotExists =true)]IReadOnlyList<User> input, [EventGrid(TopicEndpointUri = "EventGridEndpoint", TopicKeySetting = "EventGridKey")] IAsyncCollector<CloudEvent> eventCollector)
       {
 
          if (input != null && input.Count > 0)
@@ -31,20 +34,18 @@ namespace CosmicChat.CosmosDB.ChangeFeed
             _logger.LogInformation("Documents modified " + input.Count);
             _logger.LogInformation("First document Id " + input[0].name);
 
-            await operation.AddAsync(new SendToGroupAction
+            foreach (var doc in input)
             {
-               Group = input[0].address.country.code + "-location",
-               Data = BinaryData.FromObjectAsJson(new
+               var source = "CosmosDb.CosmicUsers";
+               var type = "CosmosDb.CosmicUsers.Updated";
+               var data = JsonConvert.SerializeObject(doc);
+
+               await eventCollector.AddAsync(new CloudEvent(source, type, data)
                {
-                  latitude = input[0].address.position.latitude,
-                  longitude = input[0].address.position.longitude,
-                  userId= input[0].id,
-                  userName=input[0].name,
-                  city=input[0].address.country.secondarySubDivision,
-                  state= input[0].address.country.subDivision
-               }),
-               DataType = WebPubSubDataType.Json
-            });
+                  DataContentType = "application/cloudevents+json",
+                  DataSchema = "1.0",
+               });
+            }
          }
 
       }
