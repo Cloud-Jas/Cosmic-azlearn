@@ -21,24 +21,24 @@ namespace CosmicChat.CosmosDB.ChangeFeed
       {
          _logger = logger;
       }
-      [FunctionName("CosmosDBTrigger")]
-      public async Task CosmosDBTrigger([CosmosDBTrigger(
+      [FunctionName("CosmicChatsTrigger")]
+      public async Task CosmicChatsTrigger([CosmosDBTrigger(
             databaseName: "CosmicDB",
-            containerName: "CosmicUsers",
+            containerName: "CosmicChats",
             Connection = "CosmicDBIdentity",
-            LeaseContainerName = "leasesCosmicUsers",
-            CreateLeaseContainerIfNotExists =true)]IReadOnlyList<User> input, [EventGrid(TopicEndpointUri = "EventGridEndpoint", TopicKeySetting = "EventGridKey")] IAsyncCollector<EventGridEvent> eventCollector)
+            LeaseContainerName = "leasesCosmicChats",
+            CreateLeaseContainerIfNotExists =true)]IReadOnlyList<CosmosChat> input, [EventGrid(TopicEndpointUri = "EventGridEndpoint", TopicKeySetting = "EventGridKey")] IAsyncCollector<EventGridEvent> eventCollector)
       {
 
          if (input != null && input.Count > 0)
          {
             _logger.LogInformation("Documents modified " + input.Count);
-            _logger.LogInformation("First document Id " + input[0].name);
+            _logger.LogInformation("First document Id " + input[0].id);
 
             foreach (var doc in input)
             {
-               var source = "CosmosDb.CosmicUsers";
-               var type = "CosmosDb.CosmicUsers.Updated";               
+               var source = "CosmosDb.CosmicChats";
+               var type = "CosmosDb.CosmiChats.Updated";               
 
                await eventCollector.AddAsync(new EventGridEvent(Guid.NewGuid().ToString("N"), source, doc, type, DateTime.UtcNow, "1.0"));               
             }

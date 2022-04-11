@@ -16,15 +16,15 @@ using Newtonsoft.Json.Linq;
 
 namespace CosmicChat.EventGrid.Subscribers
 {
-   public class FxPubSub
+   public class EvgsUserCreatedPubSub
    {
-      private readonly ILogger<FxPubSub> _logger;
-      public FxPubSub(ILogger<FxPubSub> logger)
+      private readonly ILogger<EvgsUserCreatedPubSub> _logger;
+      public EvgsUserCreatedPubSub(ILogger<EvgsUserCreatedPubSub> logger)
       {
          _logger = logger;
       }
-      [FunctionName("UserOnline")]
-      public async Task UserJoin([EventGridTrigger] EventGridEvent eventGridEvent, [WebPubSub(Hub = "CosmosPark")] IAsyncCollector<WebPubSubAction> operation)
+      [FunctionName("UserCreated")]
+      public async Task UserCreated([EventGridTrigger] EventGridEvent eventGridEvent, [WebPubSub(Hub = "CosmosPark")] IAsyncCollector<WebPubSubAction> operation)
       {
          _logger.LogInformation(eventGridEvent.Data.ToString());
 
