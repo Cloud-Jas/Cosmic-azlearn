@@ -32,7 +32,7 @@ namespace CosmicChat.EventGrid.Subscribers
 
          await operation.AddAsync(new SendToGroupAction
          {
-            Group = user.address.country.code + "-location",
+            Group = "global-location",
             Data = BinaryData.FromObjectAsJson(new
             {
                latitude = user.address.position.latitude,

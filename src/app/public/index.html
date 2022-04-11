@@ -1719,7 +1719,7 @@
 
       setTimeout(ws.onopen = () => {
         updateStatus('Connected');
-        joinGroup(ws, `${addressLookup.addresses[0].address.countryCode}-location`);
+        joinGroup(ws, `global-location`);
       }, 1000);
 
       ws.onmessage = async (e) => {
