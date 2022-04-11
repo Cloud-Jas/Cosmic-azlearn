@@ -1818,7 +1818,7 @@
     }
 
     async function getUserById(countryCode, userId) {
-      const response = await fetch('/api/user/' + countryCode + '/' + userId);
+      const response = await fetch('/api/user/' + userId + '/' + userId);
       return response;
     }
 
