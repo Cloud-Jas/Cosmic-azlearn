@@ -70,8 +70,8 @@ namespace CosmicChat.API
       [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
       [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
       public async Task<IActionResult> GetUserById(
-          [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "user/{partitionKey}/{userId}")] HttpRequest req,
-          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUsers", Connection = "CosmicDBIdentity", Id = "{userId}", PartitionKey = "{partitionKey}")] User user)
+          [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "user/{userId}")] HttpRequest req,
+          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUsers", Connection = "CosmicDBIdentity", Id = "{userId}")] User user)
       {
          return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
          {

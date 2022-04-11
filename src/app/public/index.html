@@ -1672,7 +1672,7 @@
       const addressLookup = await response.json();
 
       console.log('address lookup', addressLookup);
-      var userResponse = await getUserById(addressLookup.addresses[0].address.countryCode, currentUser.clientPrincipal.userId);
+      var userResponse = await getUserById(currentUser.clientPrincipal.userId);
 
       console.log(userResponse);
       console.log("create/update user");
@@ -1817,8 +1817,8 @@
       console.log(name);
     }
 
-    async function getUserById(countryCode, userId) {
-      const response = await fetch('/api/user/' + userId + '/' + userId);
+    async function getUserById(userId) {
+      const response = await fetch('/api/user/' + userId);
       return response;
     }
 
