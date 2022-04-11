@@ -1,5 +1,6 @@
 ﻿using Azure.Messaging;
 using CosmicChat.Shared.Models;
+using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Microsoft.Azure.WebJobs.Extensions.WebPubSub;
@@ -26,7 +27,7 @@ namespace CosmicChat.CosmosDB.ChangeFeed
             containerName: "CosmicUsers",
             Connection = "CosmicDBIdentity",
             LeaseContainerName = "leasesCosmicUsers",
-            CreateLeaseContainerIfNotExists =true)]IReadOnlyList<User> input, [EventGrid(TopicEndpointUri = "EventGridEndpoint", TopicKeySetting = "EventGridKey")] IAsyncCollector<CloudEvent> eventCollector)
+            CreateLeaseContainerIfNotExists =true)]IReadOnlyList<User> input, [EventGrid(TopicEndpointUri = "EventGridEndpoint", TopicKeySetting = "EventGridKey")] IAsyncCollector<EventGridEvent> eventCollector)
       {
 
          if (input != null && input.Count > 0)
@@ -37,14 +38,9 @@ namespace CosmicChat.CosmosDB.ChangeFeed
             foreach (var doc in input)
             {
                var source = "CosmosDb.CosmicUsers";
-               var type = "CosmosDb.CosmicUsers.Updated";
-               var data = JsonConvert.SerializeObject(doc);
+               var type = "CosmosDb.CosmicUsers.Updated";               
 
-               await eventCollector.AddAsync(new CloudEvent(source, type, data)
-               {
-                  DataContentType = "application/cloudevents+json",
-                  DataSchema = "1.0",
-               });
+               await eventCollector.AddAsync(new EventGridEvent(Guid.NewGuid().ToString("N"), source, doc, type, DateTime.UtcNow, "1.0"));               
             }
          }
 

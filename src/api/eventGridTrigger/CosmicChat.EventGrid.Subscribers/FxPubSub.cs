@@ -11,6 +11,8 @@ using Newtonsoft.Json;
 using CosmicChat.Shared.Models;
 using System.Collections.Generic;
 using Microsoft.Azure.WebPubSub.Common;
+using Microsoft.Azure.EventGrid.Models;
+using Newtonsoft.Json.Linq;
 
 namespace CosmicChat.EventGrid.Subscribers
 {
@@ -22,11 +24,11 @@ namespace CosmicChat.EventGrid.Subscribers
          _logger = logger;
       }
       [FunctionName("UserOnline")]
-      public async Task UserJoin([EventGridTrigger] CloudEvent cloudEvent, [WebPubSub(Hub = "CosmosPark")] IAsyncCollector<WebPubSubAction> operation)
+      public async Task UserJoin([EventGridTrigger] EventGridEvent eventGridEvent, [WebPubSub(Hub = "CosmosPark")] IAsyncCollector<WebPubSubAction> operation)
       {
-         _logger.LogInformation(cloudEvent.Data.ToString());
+         _logger.LogInformation(eventGridEvent.Data.ToString());
 
-         var user = JsonConvert.DeserializeObject<User>(cloudEvent.Data.ToString());
+         var user = ((JObject)(eventGridEvent.Data)).ToObject<User>();
 
          await operation.AddAsync(new SendToGroupAction
          {
