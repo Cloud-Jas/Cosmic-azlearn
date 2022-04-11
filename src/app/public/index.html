@@ -1775,7 +1775,7 @@
     }
 
     async function updateMapMarkers(countryCode) {
-      let responseUsers = await getAllUsersByCountryCode(countryCode)
+      let responseUsers = await getAllUsers(countryCode)
       let locations = await responseUsers.json();
 
       map.markers.clear();
@@ -1822,8 +1822,8 @@
       return response;
     }
 
-    async function getAllUsersByCountryCode(countryCode) {
-      const response = await fetch('/api/users/' + countryCode);
+    async function getAllUsers() {
+      const response = await fetch('/api/users');
       return response;
     }
 
