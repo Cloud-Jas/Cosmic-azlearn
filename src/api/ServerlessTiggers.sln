@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmicChat.API", "httpTrigg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmicChat.ComosDB.ChangeFeed", "cosmosTrigger\CosmicChat.ComosDB.ChangeFeed\CosmicChat.ComosDB.ChangeFeed.csproj", "{85021784-6A4B-4F30-A4C2-4E58820A7071}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmicChat.Shared", "CosmicChat.Shared\CosmicChat.Shared.csproj", "{6338ECF9-5FA7-4492-8E91-6323C6ACE752}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmicChat.Shared", "shared\CosmicChat.Shared.csproj", "{6338ECF9-5FA7-4492-8E91-6323C6ACE752}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmicChat.EventGrid.Subscribers", "eventGridTrigger\CosmicChat.EventGrid.Subscribers\CosmicChat.EventGrid.Subscribers.csproj", "{6FDAE762-3D0A-44AF-9AA5-F1C6FF19EB5C}"
 EndProject
