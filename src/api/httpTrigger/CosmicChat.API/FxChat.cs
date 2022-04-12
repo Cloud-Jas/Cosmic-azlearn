@@ -31,11 +31,11 @@ namespace CosmicChat.API
       }
 
       [FunctionName("CreateChat")]
-      [OpenApiOperation(operationId: "CreateUser", tags: new[] { "name" })]
+      [OpenApiOperation(operationId: "CreateChat", tags: new[] { "name" })]
       [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
       [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
       public async Task<IActionResult> CreateChat(
-          [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user")] HttpRequest req,
+          [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "chat")] HttpRequest req,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicChats", Connection = "CosmicDBIdentity")] IAsyncCollector<CosmosChat> chatsCreate)
       {
          return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
@@ -66,12 +66,12 @@ namespace CosmicChat.API
       }
 
       [FunctionName("GetAllChatsByUserId")]
-      [OpenApiOperation(operationId: "GetUserById", tags: new[] { "name" })]
+      [OpenApiOperation(operationId: "GetAllChatsByUserId", tags: new[] { "name" })]
       [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
       [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
       public async Task<IActionResult> GetAllChatsByUserId(
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "chats/user/{userId}")] HttpRequest req,
-          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUserChats", Connection = "CosmicDBIdentity", PartitionKey ="{userId}")] User user)
+          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUserChats", Connection = "CosmicDBIdentity", PartitionKey ="{userId}")] IEnumerable<CosmosChat> chats)
       {
          return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
          {
@@ -79,7 +79,7 @@ namespace CosmicChat.API
 
             try
             {
-               return await Task.FromResult(new OkObjectResult(user));
+               return await Task.FromResult(new OkObjectResult(chats));
             }
             catch (Exception ex)
             {
@@ -92,12 +92,12 @@ namespace CosmicChat.API
          }));
       }            
       [FunctionName("GetAllMessagesByChatId")]
-      [OpenApiOperation(operationId: "GetAllChatsByUserId", tags: new[] { "name" })]
+      [OpenApiOperation(operationId: "GetAllMessagesByChatId", tags: new[] { "name" })]
       [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
       [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
       public async Task<IActionResult> GetAllMessagesByChatId(
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "chats/{chatId}")] HttpRequest req,
-          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicChats", Connection = "CosmicDBIdentity", PartitionKey = "{userId}")] IEnumerable<CosmosChat> chats)
+          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicChats", Connection = "CosmicDBIdentity", PartitionKey = "{chatId}")] IEnumerable<CosmosChat> chats)
       {
          return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
          {
