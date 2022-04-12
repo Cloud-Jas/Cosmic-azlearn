@@ -1,6 +1,10 @@
-# Cosmic-azlearn
+# CosmosPark
 
-# Architecture
+This repo contains a solution that creates a serverless chat application with a gamified experience that stores 
+data in Azure Cosmos DB, Azure Functions and Azure EventGrid for events processing, Azure WebPubSub for websocket client messaging
+
+
+# CosmosPark Premier League architecture
 
 ![https://cosmospark.iamdivakarkumar.com/](./images/cosmospark.png)
 
