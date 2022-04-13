@@ -1590,13 +1590,13 @@
         map.markers.add(marker);
       });
     }
-    async function addChat(toUserId, name) {
+    async function addChat(toUserId, toUserName) {
 
-      if (document.querySelector('.person[data-name=\'' + name + '\']') == null) {
+      if (document.querySelector('.person[data-name=\'' + toUserName + '\']') == null) {
         console.log("create new chat");
         var chatId = URL.createObjectURL(new Blob([])).substr(-36);
         chatId = chatId.toString().replaceAll('-', '');
-        await addChatItems(name, toUserId, chatId);
+        await addChatItems(toUserName, toUserId, chatId);
         await addChatMessages(chatId);
         refreshChatContainer();
         setAciveChat(document.querySelector('.person[data-chat=\'' + chatId + '\']'));
@@ -1749,14 +1749,20 @@
         var toUserId = document.querySelector('ul.people .active').getAttribute("data-userId");
         var toUserName = document.querySelector('ul.people .active').getAttribute("data-name");
         console.log(chatId);
-        var userDetails = [];
+        var userDetails = []; 
         userDetails.push({
-          name: toUserName,
-          id: currentUserId
+          id: currentUserId,
+          toUser:{
+            id:toUserId,
+            name: toUserName
+          }
         });
         userDetails.push({
-          id: toUserId,
-          name: currentUserName
+          toUser:{
+            id:currentUserId,
+            name: currentUserName
+          },
+          id: toUserId
         });
         const response = await fetch('/api/chat', {
           method: "POST",
