@@ -28,6 +28,7 @@
       box-sizing: border-box;
     }
 
+
     .match {
       background-color: var(--color-bg-primary);
       display: flex;
@@ -690,6 +691,7 @@
 
     .container .right {
       position: relative;
+      border: 2px solid var(--light);
       float: left;
       width: 62.4%;
       height: 100%;
@@ -698,7 +700,6 @@
     .container .right .top {
       width: 100%;
       height: 47px;
-      padding: 15px 29px;
       background-color: #eceff1;
     }
 
@@ -800,7 +801,7 @@
     .container .right .write input {
       font-size: 16px;
       float: left;
-      width: 347px;
+      width: 90%;
       height: 40px;
       padding: 0 10px;
       color: var(--dark);
@@ -1012,10 +1013,6 @@
       <div class="wrapper">
         <div class="container">
           <div class="left">
-            <div class="top">
-              <input type="text" placeholder="Search" />
-              <a href="javascript:;" class="search"></a>
-            </div>
             <ul class="people">
               <li class="person" data-chat="person1">
                 <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/thomas.jpg" alt="" />
@@ -1034,11 +1031,11 @@
                 <span class="name">Jasritha</span>
                 <span class="time">2:09 PM</span>
                 <span class="preview">But we’re probably gonna need a new carpet.</span>
-              </li>              
+              </li>
             </ul>
           </div>
           <div class="right">
-            <div class="top"><span>To: <span class="name">Manasa Ramesh</span></span></div>
+            <div class="top"><span>To: <span class="name"></span></span></div>
             <div class="chat" data-chat="person1">
               <div style="overflow-y: scroll;height: 400px;">
                 <div class="conversation-start">
@@ -1105,12 +1102,10 @@
               <div class="bubble you">
                 But we’re probably gonna need a new carpet.
               </div>
-            </div>      
+            </div>
             <div class="write">
-              <a href="javascript:;" class="write-link attach"></a>
               <input type="text" />
-              <a href="javascript:;" class="write-link smiley"></a>
-              <a href="javascript:;" class="write-link send"></a>
+              <a href="javascript:;" onclick="sendMessage()" class="write-link send"></a>
             </div>
           </div>
           <div class="container" style="width:100%;left:160%">
@@ -1210,7 +1205,7 @@
                       <td class="rank">3</td>
                       <td class="nick">Manasa</td>
                       <td class="sp">5</td>
-                    </tr>                  
+                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -1225,6 +1220,8 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
   <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
   <script>
+
+
     class Timer {
       constructor(root) {
         root.innerHTML = Timer.getHTML();
@@ -1282,38 +1279,7 @@
 
     new Timer(
       document.querySelector(".timer")
-    );
-    document.querySelector('.chat[data-chat=person2]').classList.add('active-chat')
-    document.querySelector('.person[data-chat=person2]').classList.add('active')
-
-    let friends = {
-      list: document.querySelector('ul.people'),
-      all: document.querySelectorAll('.left .person'),
-      name: ''
-    },
-      chat = {
-        container: document.querySelector('.container .right'),
-        current: null,
-        person: null,
-        name: document.querySelector('.container .right .top .name')
-      }
-
-    friends.all.forEach(f => {
-      f.addEventListener('mousedown', () => {
-        f.classList.contains('active') || setAciveChat(f)
-      })
-    });
-
-    function setAciveChat(f) {
-      friends.list.querySelector('.active').classList.remove('active')
-      f.classList.add('active')
-      chat.current = chat.container.querySelector('.active-chat')
-      chat.person = f.getAttribute('data-chat')
-      chat.current.classList.remove('active-chat')
-      chat.container.querySelector('[data-chat="' + chat.person + '"]').classList.add('active-chat')
-      friends.name = f.querySelector('.name').innerText
-      chat.name.innerHTML = friends.name
-    }
+    );    
   </script>
   <script>
 
@@ -1324,6 +1290,7 @@
     var speechRecognizedText = "";
     let webSocket;
     let sessionId;
+    let currentUserId;
     var map, geolocationControl, currentUser;
 
     // Set the options that I want
@@ -1343,6 +1310,51 @@
       "showMethod": "fadeIn",
       "hideMethod": "fadeOut"
     }
+
+    let friends,chat;
+
+    function refreshChatContainer() {
+      friends = {
+        list: document.querySelector('ul.people'),
+        all: document.querySelectorAll('.left .person'),
+        name: ''
+      },
+        chat = {
+          container: document.querySelector('.container .right'),
+          current: null,
+          person: null,
+          name: document.querySelector('.container .right .top .name')
+        }
+      if (friends.list.querySelector('.active') != null) {
+        friends.list.querySelector('.active').classList.remove('active');
+      }
+
+      friends.all.forEach(f => {
+        f.addEventListener('mousedown', () => {
+          f.classList.contains('active') || setAciveChat(f)
+        })
+      });
+    }
+
+    function setAciveChat(f) {
+      if (friends.list.querySelector('.active') != null) {
+        friends.list.querySelector('.active').classList.remove('active')
+      }
+      f.classList.add('active')
+      friends.name = f.querySelector('.name').innerText
+      chat.name.innerHTML = friends.name
+      chat.current = chat.container.querySelector('.active-chat')
+      chat.person = f.getAttribute('data-chat')
+      if (chat.current != null) {
+        chat.current.classList.remove('active-chat');
+      }
+      if (chat.container.querySelector('[data-chat="' + chat.person + '"]') != null) {
+        chat.container.querySelector('[data-chat="' + chat.person + '"]').classList.add('active-chat');
+      }
+    }
+
+    refreshChatContainer();
+
     function setMapToUserLocation() {
       navigator.geolocation.getCurrentPosition(function (position) {
 
@@ -1409,7 +1421,7 @@
       const addressLookup = await response.json();
 
       console.log('address lookup', addressLookup);
-      var userResponse = await getUserById(currentUser.clientPrincipal.userId);
+      var userResponse = await getUserById(currentUserId);
 
       console.log(userResponse);
       console.log("create/update user");
@@ -1419,7 +1431,7 @@
           method: "POST",
           body: JSON.stringify({
             identityProvider: currentUser.clientPrincipal.identityProvider,
-            id: currentUser.clientPrincipal.userId,
+            id: currentUserId,
             name: currentUser.clientPrincipal.userDetails,
             roles: currentUser.clientPrincipal.userRoles,
             address: {
@@ -1488,6 +1500,7 @@
         window.location.href = "/.auth/login/github"
       }
       else {
+        currentUserId = currentUser.clientPrincipal.userId;
         map = new atlas.Map("globeView", {
           authOptions: {
             authType: 'subscriptionKey',
@@ -1519,20 +1532,6 @@
 
       map.markers.clear();
 
-      var cosmosParkTemplate = {
-        title: '{name}',
-        content: '<div>' +
-          '<button id="startBtn" onclick="addChat({name})" type="button" style=" color: #fff;background-color: #20ad00;border-color: #20ad00;">Chat</button>' +
-          '<\div>',
-        singleDescription: false,
-        numberFormat: {
-          maximumFractionDigits: 2
-        },
-
-        //Since we trust the data being retrieve, don't sandbox the content so that we can use CSS classes.
-        sandboxContent: true
-      };
-
       locations.forEach(element => {
         console.log(element);
         var marker = new atlas.HtmlMarker({
@@ -1541,7 +1540,7 @@
           popup: new atlas.Popup({
             content: '<div style="padding:20px;">' +
               '<div> <span>' + element.name + '</span></div>' +
-              '<button id="startBtn" onclick="addChat(\'' + element.id + '\')" type="button" style=" color: #fff;background-color: #20ad00;border-color: #20ad00;margin-top:10px">Chat</button>' +
+              '<button id="startBtn" onclick="addChat(\'' + element.id + '\',\'' + element.name + '\')" type="button" style=" color: #fff;background-color: #20ad00;border-color: #20ad00;margin-top:10px">Say Hi</button>' +
               '<\div>'
           })
         });
@@ -1552,9 +1551,79 @@
         map.markers.add(marker);
       });
     }
-    function addChat(name) {
-      console.log(name);
+    async function addChat(id, name) {
+
+      if (document.querySelector('.person[data-chat=' + id + ']') == null) {        
+        console.log("create new chat");
+        var githubResponse = await fetch("https://api.github.com/search/users?q=" + name + "+in%3Ausername");
+        var data = (await githubResponse.json())
+        console.log(data);
+        var avatarUrl = data.items[0].avatar_url;
+
+        console.log(avatarUrl);
+
+        let chatItems = [];
+        var chats = document.querySelector('ul.people');
+        let chatItem = document.createElement('li');
+        chatItem.classList.add("person");
+        chatItem.classList.add("active");
+        let avatarItem = document.createElement("img");
+        avatarItem.src = avatarUrl;
+        chatItem.appendChild(avatarItem);
+        let nameItem = document.createElement("span");
+        nameItem.classList.add("name");
+        nameItem.textContent = name;
+        chatItem.appendChild(nameItem);
+        let timeStampItem = document.createElement("span");
+        timeStampItem.classList.add("time");
+        timeStampItem.textContent = formatAMPM(new Date());
+        chatItem.appendChild(timeStampItem);
+
+        chatItem.setAttribute("data-chat", id);
+
+        chats.appendChild(chatItem);
+
+        refreshChatContainer();
+        setAciveChat(chatItem);
+      }
+
+      else {
+        refreshChatContainer();
+        document.querySelector('.person[data-chat=' + id + ']').classList.add('active');
+        document.querySelector('.chat[data-chat=' + id + ']').classList.add('active-chat')
+        setAciveChat(document.querySelector('.person[data-chat=' + id + ']'));
+      }
+
     }
+
+    function formatAMPM(date) {
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+      var ampm = hours >= 12 ? 'pm' : 'am';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      var strTime = hours + ':' + minutes + ' ' + ampm;
+      return strTime;
+    }
+
+
+    async function createChat(id, message) {
+      var userIds = [];
+      userIds.push(currentUserId);
+      userIds.push(id);
+      const response = await fetch('/api/chat', {
+        method: "POST",
+        body: JSON.stringify({
+          userIds: userIds,
+          message: {
+            senderId: id,
+            content: message
+          }
+        })
+      });
+    }
+
 
     async function getUserById(userId) {
       const response = await fetch('/api/user/' + userId);
