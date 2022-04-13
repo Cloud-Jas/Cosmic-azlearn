@@ -42,7 +42,8 @@ namespace CosmicChat.EventGrid.Subscribers
                   userId = user.id,
                   userName = user.name,
                   city = user.address.country.secondarySubDivision,
-                  state = user.address.country.subDivision
+                  state = user.address.country.subDivision,
+                  type="UserCreatedEvent"
                }),
                DataType = WebPubSubDataType.Json
             });

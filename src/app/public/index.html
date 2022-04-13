@@ -28,6 +28,11 @@
       box-sizing: border-box;
     }
 
+    .overflowCustom {
+      overflow-y: auto;
+      height: 400px;
+    }
+
 
     .match {
       background-color: var(--color-bg-primary);
@@ -650,8 +655,8 @@
     .container .left .people .person .time {
       font-size: 14px;
       position: absolute;
-      top: 16px;
-      right: 10%;
+      top: 7px;
+      right: 4%;
       padding: 0 0 5px 5px;
       color: var(--grey);
       background-color: var(--white);
@@ -1291,7 +1296,7 @@
     let webSocket;
     let sessionId;
     let chatMessageVal = "";
-    let currentUserId,currentUserName;
+    let currentUserId, currentUserName;
     let toChatId;
     var map, geolocationControl, currentUser;
 
@@ -1404,11 +1409,11 @@
         onlineDiv.style.display = "none";
     }
 
-    function joinGroup(ws, group) {
+    function joinGroup(ws, group,increment=0) {
       ws.send(JSON.stringify({
         type: 'joinGroup',
         group: group,
-        ackId: 1
+        ackId: 1+increment
       }));
     }
 
@@ -1460,10 +1465,26 @@
         });
       }
 
-
       //update markers
 
       await updateMapMarkers();
+
+      //get all chats
+
+      var chatsResponse = await getAllChatsByUserId(currentUserId);
+      var chatsData = await chatsResponse.json();
+      console.log(chatsData);
+
+
+      chatsData.forEach(async (element,i) => {
+
+        await addChatItems(element.chatName, element.userId, element.chatId, element.lastMessage, element.lastMessageTimestamp);
+        var chatMessages = await getAllMessagesByChatId(element.chatId);
+        var chatMessagesData = await chatMessages.json();
+        await addChatMessages(element.chatId, chatMessagesData);
+        refreshChatContainer();
+        joinGroup(webSocket, element.chatId,i+1);
+      });
 
       //get websocket connection
       var connection = await fetch('/api/pubsub/connection');
@@ -1484,11 +1505,15 @@
         if (data.from == "group")
           await updateMapMarkers();
 
-        if (data.from == "group" && data.data.userId != currentUser.clientPrincipal.userId) {
+        if (data.from == "group" && data.data.type=="UserCreatedEvent" && data.data.userId != currentUser.clientPrincipal.userId) {
           console.log(data.from);
           console.log(data.data.userId);
           console.log(currentUser.clientPrincipal.userId);
           toastr.success("" + data.data.userName + " is online from " + data.data.city + "," + data.data.state);
+        }
+        else if(data.from=="group" && data.data.type=="MessageSentEvent")
+        {
+          console.log(data.data);
         }
 
         console.log("websocket message", data);
@@ -1506,7 +1531,7 @@
       }
       else {
         currentUserId = currentUser.clientPrincipal.userId;
-        currentUserName=currentUser.clientPrincipal.userDetails;
+        currentUserName = currentUser.clientPrincipal.userDetails;
         map = new atlas.Map("globeView", {
           authOptions: {
             authType: 'subscriptionKey',
@@ -1557,49 +1582,14 @@
         map.markers.add(marker);
       });
     }
-    async function addChat(toUserId,name) {
+    async function addChat(toUserId, name) {
 
-      if (document.querySelector('.person[data-name=\'' +name + '\']') == null) {
+      if (document.querySelector('.person[data-name=\'' + name + '\']') == null) {
         console.log("create new chat");
         var chatId = URL.createObjectURL(new Blob([])).substr(-36);
         chatId = chatId.toString().replaceAll('-', '');
-        var githubResponse = await fetch("https://api.github.com/search/users?q=" + name + "+in%3Ausername");
-        var data = (await githubResponse.json())
-        console.log(data);
-        var avatarUrl = data.items[0].avatar_url;
-
-        console.log(avatarUrl);
-
-        let chatItems = [];
-        var chats = document.querySelector('ul.people');
-        let chatItem = document.createElement('li');
-        chatItem.classList.add("person");
-        chatItem.classList.add("active");
-        let avatarItem = document.createElement("img");
-        avatarItem.src = avatarUrl;
-        chatItem.appendChild(avatarItem);
-        let nameItem = document.createElement("span");
-        nameItem.classList.add("name");
-        nameItem.textContent = name;
-        chatItem.appendChild(nameItem);
-        let timeStampItem = document.createElement("span");
-        timeStampItem.classList.add("time");
-        timeStampItem.textContent = formatAMPM(new Date());
-        chatItem.appendChild(timeStampItem);
-
-        chatItem.setAttribute("data-chat", chatId);
-        chatItem.setAttribute("data-name",name);
-        chatItem.setAttribute("data-userId",toUserId);
-
-        chats.appendChild(chatItem);
-
-        let chatMessageContainer = document.querySelector('.container .right');
-        let chatMessage = document.createElement("div");
-        chatMessage.classList.add("chat");
-        chatMessage.setAttribute("data-chat", chatId);
-        let lastElement = chatMessageContainer.lastElementChild;
-        chatMessageContainer.insertBefore(chatMessage, lastElement);
-
+        await addChatItems(name, toUserId, chatId);
+        await addChatMessages(chatId);
         refreshChatContainer();
         setAciveChat(chatItem);
       }
@@ -1607,11 +1597,95 @@
       else {
         refreshChatContainer();
         document.querySelector('.person[data-name=\'' + name + '\']').classList.add('active');
-        var chatId= document.querySelector('.person[data-name=' + name + ']').getAttribute("data-chat");
-        document.querySelector('.chat[data-chat=\'' +  chatId + '\']').classList.add('active-chat')
+        var chatId = document.querySelector('.person[data-name=' + name + ']').getAttribute("data-chat");
+        document.querySelector('.chat[data-chat=\'' + chatId + '\']').classList.add('active-chat')
         setAciveChat(document.querySelector('.person[data-chat=\'' + chatId + '\']'));
       }
 
+    }
+
+    async function addChatItems(name, userId, chatId, message = null, timestamp = null) {
+      var githubResponse = await fetch("https://api.github.com/search/users?q=" + name + "+in%3Ausername");
+      var data = (await githubResponse.json())
+      console.log(data);
+      var avatarUrl = data.items[0].avatar_url;
+
+      console.log(avatarUrl);
+
+      let chatItems = [];
+      var chats = document.querySelector('ul.people');
+      let chatItem = document.createElement('li');
+      chatItem.classList.add("person");
+      chatItem.classList.add("active");
+      let avatarItem = document.createElement("img");
+      avatarItem.src = avatarUrl;
+      chatItem.appendChild(avatarItem);
+      let nameItem = document.createElement("span");
+      nameItem.classList.add("name");
+      nameItem.textContent = name;
+      chatItem.appendChild(nameItem);
+      let timeStampItem = document.createElement("span");
+      timeStampItem.classList.add("time");
+
+      if (timestamp != null) {
+        var d = new Date(0);
+        d.setUTCSeconds(timestamp);
+      }
+      timeStampItem.textContent = timestamp == null ? formatAMPM(new Date()) : formatAMPM(d);
+      chatItem.appendChild(timeStampItem);
+      let lastMessageItem = document.createElement("span");
+      lastMessageItem.classList.add("preview");
+      lastMessageItem.textContent = message == null ? "" : message;
+      chatItem.appendChild(lastMessageItem);
+
+      chatItem.setAttribute("data-chat", chatId);
+      chatItem.setAttribute("data-name", name);
+      chatItem.setAttribute("data-userId", userId);
+
+      chats.appendChild(chatItem);
+
+    }
+
+
+    async function addChatMessages(chatId, chatMessagesData = []) {
+      let chatMessageContainer = document.querySelector('.container .right');
+      let chatMessage = document.createElement("div");
+      chatMessage.classList.add("chat");
+      chatMessage.setAttribute("data-chat", chatId);
+      let lastElement = chatMessageContainer.lastElementChild;
+      chatMessageContainer.insertBefore(chatMessage, lastElement);
+      let overflowDiv = document.createElement("div");
+      overflowDiv.classList.add("overflowCustom");
+
+      chatMessagesData.forEach(element => {
+
+        let bubbleDiv = document.createElement("div");
+        bubbleDiv.classList.add("bubble");
+
+        if (element.message.senderId == currentUserId)
+          bubbleDiv.classList.add("me");
+        else
+          bubbleDiv.classList.add("you");
+
+        bubbleDiv.textContent = element.message.content;
+
+        overflowDiv.appendChild(bubbleDiv);
+
+      });
+
+      chatMessage.appendChild(overflowDiv);
+
+
+
+    }
+
+    function checkCurrentDate(date) {
+      var inputDate = new Date(date);
+      var todaysDate = new Date();
+      if (inputDate.setHours(0, 0, 0, 0) == todaysDate.setHours(0, 0, 0, 0)) {
+        return true;
+      }
+      return false;
     }
 
     function formatAMPM(date) {
@@ -1621,8 +1695,17 @@
       hours = hours % 12;
       hours = hours ? hours : 12; // the hour '0' should be '12'
       minutes = minutes < 10 ? '0' + minutes : minutes;
-      var strTime = hours + ':' + minutes + ' ' + ampm;
-      return strTime;
+      if (checkCurrentDate(date)) {
+        return hours +
+          ":" + minutes + ' ' + ampm;
+      }
+      else {
+        return date.getDate() +
+          "/" + (date.getMonth() + 1) +
+          "/" + date.getFullYear() +
+          " " + hours +
+          ":" + minutes + ' ' + ampm;
+      }
     }
 
 
@@ -1633,24 +1716,24 @@
 
     async function sendMessage() {
       if (chatMessageVal != "") {
-        var chatId= document.querySelector('ul.people .active').getAttribute("data-chat");
-        var toUserId=document.querySelector('ul.people .active').getAttribute("data-userId");
-        var toUserName=document.querySelector('ul.people .active').getAttribute("data-name");
+        var chatId = document.querySelector('ul.people .active').getAttribute("data-chat");
+        var toUserId = document.querySelector('ul.people .active').getAttribute("data-userId");
+        var toUserName = document.querySelector('ul.people .active').getAttribute("data-name");
         console.log(chatId);
-        var userIds = [];
-        userIds.push({
-          name:currentUserName,
-          id:currentUserId
+        var userDetails = [];
+        userDetails.push({
+          name: toUserName,
+          id: currentUserId
         });
-        userIds.push({
-          id:toUserId,
-          name:toUserName
+        userDetails.push({
+          id: toUserId,
+          name: currentUserName
         });
         const response = await fetch('/api/chat', {
           method: "POST",
           body: JSON.stringify({
-            chat:{
-              id:chatId
+            chat: {
+              id: chatId
             },
             userDetails: userDetails,
             message: {
@@ -1659,6 +1742,8 @@
             }
           })
         });
+        var messageInput = document.getElementById("chatMessageInput");
+        messageInput.value = "";
       }
     }
 
@@ -1670,6 +1755,16 @@
 
     async function getAllUsers() {
       const response = await fetch('/api/users');
+      return response;
+    }
+
+    async function getAllChatsByUserId(userId) {
+      const response = await fetch('/api/chats/user/' + userId);
+      return response;
+    }
+
+    async function getAllMessagesByChatId(chatId) {
+      const response = await fetch('/api/chats/' + chatId);
       return response;
     }
 
