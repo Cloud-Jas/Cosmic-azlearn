@@ -41,8 +41,7 @@ namespace CosmicChat.EventGrid.Subscribers
                   senderId = chatResponse.message.senderId,
                   senderMessage = chatResponse.message.content,
                   timestamp = chatResponse.message.timestamp,
-                  messageId = chatResponse.id,
-                  chatUsers = chatResponse.userIds
+                  messageId = chatResponse.id                
                }),
                DataType = WebPubSubDataType.Json
             });
