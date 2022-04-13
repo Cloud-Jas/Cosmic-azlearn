@@ -36,7 +36,7 @@ namespace CosmicChat.API
       [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
       public async Task<IActionResult> CreateUser(
           [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user")] HttpRequest req,
-          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUsers", Connection = "CosmicDBIdentity")] IAsyncCollector<User> usersCreate)
+          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUsers", Connection = "CosmicDBIdentity")] IAsyncCollector<CosmosUser> usersCreate)
       {
          return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
          {
@@ -47,7 +47,7 @@ namespace CosmicChat.API
             {
                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
-               var user = JObject.Parse(requestBody).ToObject<User>();
+               var user = JObject.Parse(requestBody).ToObject<CosmosUser>();
 
                await usersCreate.AddAsync(user);
 
@@ -71,7 +71,7 @@ namespace CosmicChat.API
       [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
       public async Task<IActionResult> GetUserById(
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "user/{userId}")] HttpRequest req,
-          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUsers", Connection = "CosmicDBIdentity", Id = "{userId}",PartitionKey ="{userId}")] User user)
+          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUsers", Connection = "CosmicDBIdentity", Id = "{userId}",PartitionKey ="{userId}")] CosmosUser user)
       {
          return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
          {
@@ -97,7 +97,7 @@ namespace CosmicChat.API
       [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
       public async Task<IActionResult> GetAllUsers(
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users")] HttpRequest req,
-          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUsers", Connection = "CosmicDBIdentity")] IEnumerable<User> users)
+          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUsers", Connection = "CosmicDBIdentity")] IEnumerable<CosmosUser> users)
       {
          return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
          {
@@ -122,7 +122,7 @@ namespace CosmicChat.API
       [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
       public async Task<IActionResult> GetAllUsersByCountryCode(
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/{countryCode}")] HttpRequest req,
-          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUsers", Connection = "CosmicDBIdentity", PartitionKey = "{countryCode}")] IEnumerable<User> users)
+          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUsers", Connection = "CosmicDBIdentity", PartitionKey = "{countryCode}")] IEnumerable<CosmosUser> users)
       {
          return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
          {

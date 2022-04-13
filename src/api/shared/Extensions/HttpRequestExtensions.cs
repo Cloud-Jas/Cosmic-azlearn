@@ -12,7 +12,7 @@ namespace CosmicChat.Shared.Extensions
 {
    public static class HttpRequestExtensions
    {
-      public static User ParseUser(this HttpRequest req)
+      public static CosmosUser ParseUser(this HttpRequest req)
       {
          var principal = new ClientPrincipal();
 
@@ -24,7 +24,7 @@ namespace CosmicChat.Shared.Extensions
             principal = JsonSerializer.Deserialize<ClientPrincipal>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
          }
 
-         var user = new User
+         var user = new CosmosUser
          {
             id = principal?.UserId,
             name = principal?.UserDetails

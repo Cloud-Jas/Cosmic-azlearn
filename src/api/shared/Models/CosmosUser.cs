@@ -35,7 +35,7 @@ namespace CosmicChat.Shared.Models
       public Position position { get; set; }
    }
 
-   public class User
+   public class CosmosUser
    {
       public string identityProvider { get; set; }
       public string id { get; set; }

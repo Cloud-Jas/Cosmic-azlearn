@@ -30,7 +30,7 @@ namespace CosmicChat.EventGrid.Subscribers
 
          if (eventGridEvent.EventType.Equals("CosmosDb.CosmicUsers.Created"))
          {
-            var user = ((JObject)(eventGridEvent.Data)).ToObject<User>();
+            var user = ((JObject)(eventGridEvent.Data)).ToObject<CosmosUser>();
 
             await operation.AddAsync(new SendToGroupAction
             {
