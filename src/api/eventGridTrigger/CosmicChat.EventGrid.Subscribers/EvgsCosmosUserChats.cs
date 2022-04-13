@@ -36,7 +36,7 @@ namespace CosmicChat.EventGrid.Subscribers
 
          foreach (var user in cosmosChat.userDetails)
          {
-            if (i == 1) i = 0;
+            if (i == 1) i = -1;
             var cosmosUserChat = new CosmosUserChat
             {
                chatId = cosmosChat.chat.id,

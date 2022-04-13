@@ -1600,6 +1600,7 @@
         await addChatMessages(chatId);
         refreshChatContainer();
         setAciveChat(document.querySelector('.person[data-chat=\'' + chatId + '\']'));
+        joinGroup(webSocket,chatId,Date.now());
       }
 
       else {
