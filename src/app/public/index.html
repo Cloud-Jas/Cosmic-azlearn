@@ -1599,7 +1599,7 @@
         await addChatItems(name, toUserId, chatId);
         await addChatMessages(chatId);
         refreshChatContainer();
-        setAciveChat(chatItem);
+        setAciveChat(document.querySelector('.person[data-chat=\'' + chatId + '\']'));
       }
 
       else {
@@ -1750,20 +1750,18 @@
         console.log(chatId);
         var userDetails = [];
         userDetails.push({
-          name: currentUserName,
+          name: toUserName,
           id: currentUserId
         });
         userDetails.push({
           id: toUserId,
-          name: toUserName
+          name: currentUserName
         });
         const response = await fetch('/api/chat', {
           method: "POST",
           body: JSON.stringify({
             chat: {
-              id: chatId,
-              userId:toUserId,
-              userName:toUserName
+              id: chatId
             },
             userDetails: userDetails,
             message: {
