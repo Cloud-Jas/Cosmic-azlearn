@@ -49,6 +49,10 @@ namespace CosmicChat.API
 
                var chat = JObject.Parse(requestBody).ToObject<CosmosChat>();
 
+               chat.id = String.IsNullOrWhiteSpace(chat.id) ? Guid.NewGuid().ToString("N") : chat.id;
+
+               chat.message.timestamp = Convert.ToInt64(DateTimeOffset.Now.ToUnixTimeSeconds());
+
                await chatsCreate.AddAsync(chat);
 
                return new ObjectResult(chat) { StatusCode = StatusCodes.Status201Created };

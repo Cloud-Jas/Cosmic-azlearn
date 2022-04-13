@@ -1104,7 +1104,7 @@
               </div>
             </div>
             <div class="write">
-              <input type="text" />
+              <input id="chatMessageInput" type="text" onkeyup="typingMessage(this.value)" />
               <a href="javascript:;" onclick="sendMessage()" class="write-link send"></a>
             </div>
           </div>
@@ -1290,7 +1290,9 @@
     var speechRecognizedText = "";
     let webSocket;
     let sessionId;
+    let chatMessageVal = "";
     let currentUserId;
+    let toChatId;
     var map, geolocationControl, currentUser;
 
     // Set the options that I want
@@ -1311,7 +1313,7 @@
       "hideMethod": "fadeOut"
     }
 
-    let friends,chat;
+    let friends, chat;
 
     function refreshChatContainer() {
       friends = {
@@ -1337,6 +1339,8 @@
     }
 
     function setAciveChat(f) {
+      var messageInput = document.getElementById("chatMessageInput");
+      messageInput.value = "";
       if (friends.list.querySelector('.active') != null) {
         friends.list.querySelector('.active').classList.remove('active')
       }
@@ -1344,7 +1348,8 @@
       friends.name = f.querySelector('.name').innerText
       chat.name.innerHTML = friends.name
       chat.current = chat.container.querySelector('.active-chat')
-      chat.person = f.getAttribute('data-chat')
+      chat.person = f.getAttribute('data-chat');
+      toChatId = chat.person;
       if (chat.current != null) {
         chat.current.classList.remove('active-chat');
       }
@@ -1551,10 +1556,12 @@
         map.markers.add(marker);
       });
     }
-    async function addChat(id, name) {
+    async function addChat(toUserId,name) {
 
-      if (document.querySelector('.person[data-chat=' + id + ']') == null) {        
+      if (document.querySelector('.person[data-name=\'' +name + '\']') == null) {
         console.log("create new chat");
+        var chatId = URL.createObjectURL(new Blob([])).substr(-36);
+        chatId = chatId.toString().replaceAll('-', '');
         var githubResponse = await fetch("https://api.github.com/search/users?q=" + name + "+in%3Ausername");
         var data = (await githubResponse.json())
         console.log(data);
@@ -1579,9 +1586,18 @@
         timeStampItem.textContent = formatAMPM(new Date());
         chatItem.appendChild(timeStampItem);
 
-        chatItem.setAttribute("data-chat", id);
+        chatItem.setAttribute("data-chat", chatId);
+        chatItem.setAttribute("data-name",name);
+        chatItem.setAttribute("data-userId",toUserId);
 
         chats.appendChild(chatItem);
+
+        let chatMessageContainer = document.querySelector('.container .right');
+        let chatMessage = document.createElement("div");
+        chatMessage.classList.add("chat");
+        chatMessage.setAttribute("data-chat", chatId);
+        let lastElement = chatMessageContainer.lastElementChild;
+        chatMessageContainer.insertBefore(chatMessage, lastElement);
 
         refreshChatContainer();
         setAciveChat(chatItem);
@@ -1589,9 +1605,10 @@
 
       else {
         refreshChatContainer();
-        document.querySelector('.person[data-chat=' + id + ']').classList.add('active');
-        document.querySelector('.chat[data-chat=' + id + ']').classList.add('active-chat')
-        setAciveChat(document.querySelector('.person[data-chat=' + id + ']'));
+        document.querySelector('.person[data-name=\'' + name + '\']').classList.add('active');
+        var chatId= document.querySelector('.person[data-name=' + name + ']').getAttribute("data-chat");
+        document.querySelector('.chat[data-chat=\'' +  chatId + '\']').classList.add('active-chat')
+        setAciveChat(document.querySelector('.person[data-chat=\'' + chatId + '\']'));
       }
 
     }
@@ -1608,20 +1625,33 @@
     }
 
 
-    async function createChat(id, message) {
-      var userIds = [];
-      userIds.push(currentUserId);
-      userIds.push(id);
-      const response = await fetch('/api/chat', {
-        method: "POST",
-        body: JSON.stringify({
-          userIds: userIds,
-          message: {
-            senderId: id,
-            content: message
-          }
-        })
-      });
+    function typingMessage(value) {
+      console.log(value);
+      chatMessageVal = value;
+    }
+
+    async function sendMessage() {
+      if (chatMessageVal != "") {
+        var chatId= document.querySelector('ul.people .active').getAttribute("data-chat");
+        var toUserId=document.querySelector('ul.people .active').getAttribute("data-userId");
+        console.log(chatId);
+        var userIds = [];
+        userIds.push(currentUserId);
+        userIds.push(toUserId);
+        const response = await fetch('/api/chat', {
+          method: "POST",
+          body: JSON.stringify({
+            chat:{
+              id:chatId
+            },
+            userIds: userIds,
+            message: {
+              senderId: currentUserId,
+              content: chatMessageVal
+            }
+          })
+        });
+      }
     }
 
 

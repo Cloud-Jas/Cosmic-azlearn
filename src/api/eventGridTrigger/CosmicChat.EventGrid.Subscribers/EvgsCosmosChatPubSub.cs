@@ -28,22 +28,25 @@ namespace CosmicChat.EventGrid.Subscribers
       {
          _logger.LogInformation(eventGridEvent.Data.ToString());
 
-         var chatResponse = ((JObject)(eventGridEvent.Data)).ToObject<CosmosChat>();
-
-         await operation.AddAsync(new SendToGroupAction
+         if (eventGridEvent.EventType.Equals("CosmosDb.CosmiChats.Updated"))
          {
-            Group = chatResponse.chat.id,
-            Data = BinaryData.FromObjectAsJson(new
+            var chatResponse = ((JObject)(eventGridEvent.Data)).ToObject<CosmosChat>();
+
+            await operation.AddAsync(new SendToGroupAction
             {
-               chatId=chatResponse.chat.id,
-               senderId=chatResponse.message.senderId,
-               senderMessage=chatResponse.message.content,
-               timestamp=chatResponse.message.timestamp,
-               messageId=chatResponse.id,
-               chatUsers=chatResponse.userIds
-            }),
-            DataType = WebPubSubDataType.Json
-         });
+               Group = chatResponse.chat.id,
+               Data = BinaryData.FromObjectAsJson(new
+               {
+                  chatId = chatResponse.chat.id,
+                  senderId = chatResponse.message.senderId,
+                  senderMessage = chatResponse.message.content,
+                  timestamp = chatResponse.message.timestamp,
+                  messageId = chatResponse.id,
+                  chatUsers = chatResponse.userIds
+               }),
+               DataType = WebPubSubDataType.Json
+            });
+         }
 
       }
    }

@@ -16,7 +16,7 @@ namespace CosmicChat.Shared.Models
    {
       public string senderId { get; set; }
       public string content { get; set; }
-      public int timestamp { get; set; }
+      public long timestamp { get; set; }
    }
 
    public class CosmosChat
@@ -25,7 +25,7 @@ namespace CosmicChat.Shared.Models
       public Chat chat { get; set; }
       public List<string> userIds { get; set; }
       public Message message { get; set; }
-      public int _ts { get; set; }
+      public long _ts { get; set; }
    }
 
 

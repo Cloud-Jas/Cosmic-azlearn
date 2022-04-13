@@ -28,22 +28,25 @@ namespace CosmicChat.EventGrid.Subscribers
       {
          _logger.LogInformation(eventGridEvent.Data.ToString());
 
-         var user = ((JObject)(eventGridEvent.Data)).ToObject<User>();
-
-         await operation.AddAsync(new SendToGroupAction
+         if (eventGridEvent.EventType.Equals("CosmosDb.CosmicUsers.Created"))
          {
-            Group = "global-location",
-            Data = BinaryData.FromObjectAsJson(new
+            var user = ((JObject)(eventGridEvent.Data)).ToObject<User>();
+
+            await operation.AddAsync(new SendToGroupAction
             {
-               latitude = user.address.position.latitude,
-               longitude = user.address.position.longitude,
-               userId = user.id,
-               userName = user.name,
-               city = user.address.country.secondarySubDivision,
-               state = user.address.country.subDivision
-            }),
-            DataType = WebPubSubDataType.Json
-         });
+               Group = "global-location",
+               Data = BinaryData.FromObjectAsJson(new
+               {
+                  latitude = user.address.position.latitude,
+                  longitude = user.address.position.longitude,
+                  userId = user.id,
+                  userName = user.name,
+                  city = user.address.country.secondarySubDivision,
+                  state = user.address.country.subDivision
+               }),
+               DataType = WebPubSubDataType.Json
+            });
+         }
 
       }
    }
