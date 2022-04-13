@@ -1299,6 +1299,7 @@
     let currentUserId, currentUserName;
     let toChatId;
     var map, geolocationControl, currentUser;
+    let avatarUrl = "https://static.toiimg.com/thumb/resizemode-4,msid-76729750,imgsize-249247,width-720/76729750.jpg"
 
     // Set the options that I want
     toastr.options = {
@@ -1409,11 +1410,11 @@
         onlineDiv.style.display = "none";
     }
 
-    function joinGroup(ws, group,increment=0) {
+    function joinGroup(ws, group, increment = 0) {
       ws.send(JSON.stringify({
         type: 'joinGroup',
         group: group,
-        ackId: 1+increment
+        ackId: 1 + increment
       }));
     }
 
@@ -1476,14 +1477,14 @@
       console.log(chatsData);
 
 
-      chatsData.forEach(async (element,i) => {
+      chatsData.forEach(async (element, i) => {
 
         await addChatItems(element.chatName, element.userId, element.chatId, element.lastMessage, element.lastMessageTimestamp);
         var chatMessages = await getAllMessagesByChatId(element.chatId);
         var chatMessagesData = await chatMessages.json();
         await addChatMessages(element.chatId, chatMessagesData);
         refreshChatContainer();
-        joinGroup(webSocket, element.chatId,i+1);
+        joinGroup(webSocket, element.chatId, i + 1);
       });
 
       //get websocket connection
@@ -1505,15 +1506,22 @@
         if (data.from == "group")
           await updateMapMarkers();
 
-        if (data.from == "group" && data.data.type=="UserCreatedEvent" && data.data.userId != currentUser.clientPrincipal.userId) {
+        if (data.from == "group" && data.data.type == "UserCreatedEvent" && data.data.userId != currentUserId) {
           console.log(data.from);
           console.log(data.data.userId);
-          console.log(currentUser.clientPrincipal.userId);
+          console.log(currentUserId);
           toastr.success("" + data.data.userName + " is online from " + data.data.city + "," + data.data.state);
         }
-        else if(data.from=="group" && data.data.type=="MessageSentEvent")
-        {
+        else if (data.from == "group" && data.data.type == "MessageSentEvent" &&  data.data.senderId!=currentUserId) {
           console.log(data.data);
+          let chatMessages = [];
+          chatMessages.push({
+            message: {
+              senderId: data.data.senderId,
+              content: data.data.senderMessage
+            }
+          });
+          addChatMessages(data.data.chatId, chatMessages);
         }
 
         console.log("websocket message", data);
@@ -1608,7 +1616,8 @@
       var githubResponse = await fetch("https://api.github.com/search/users?q=" + name + "+in%3Ausername");
       var data = (await githubResponse.json())
       console.log(data);
-      var avatarUrl = data.items[0].avatar_url;
+      if (data.items[0] != null)
+        avatarUrl = data.items[0].avatar_url;
 
       console.log(avatarUrl);
 
@@ -1648,33 +1657,52 @@
 
 
     async function addChatMessages(chatId, chatMessagesData = []) {
-      let chatMessageContainer = document.querySelector('.container .right');
-      let chatMessage = document.createElement("div");
-      chatMessage.classList.add("chat");
-      chatMessage.setAttribute("data-chat", chatId);
-      let lastElement = chatMessageContainer.lastElementChild;
-      chatMessageContainer.insertBefore(chatMessage, lastElement);
-      let overflowDiv = document.createElement("div");
-      overflowDiv.classList.add("overflowCustom");
+      if (document.querySelector('.chat[data-chat=\'' + chatId + '\']') == null) {
+        let chatMessageContainer = document.querySelector('.container .right');
+        let chatMessage = document.createElement("div");
+        chatMessage.classList.add("chat");
+        chatMessage.setAttribute("data-chat", chatId);
+        let lastElement = chatMessageContainer.lastElementChild;
+        chatMessageContainer.insertBefore(chatMessage, lastElement);
+        let overflowDiv = document.createElement("div");
+        overflowDiv.classList.add("overflowCustom");
 
-      chatMessagesData.forEach(element => {
+        chatMessagesData.forEach(element => {
 
-        let bubbleDiv = document.createElement("div");
-        bubbleDiv.classList.add("bubble");
+          let bubbleDiv = document.createElement("div");
+          bubbleDiv.classList.add("bubble");
 
-        if (element.message.senderId == currentUserId)
-          bubbleDiv.classList.add("me");
-        else
-          bubbleDiv.classList.add("you");
+          if (element.message.senderId == currentUserId)
+            bubbleDiv.classList.add("me");
+          else
+            bubbleDiv.classList.add("you");
 
-        bubbleDiv.textContent = element.message.content;
+          bubbleDiv.textContent = element.message.content;
 
-        overflowDiv.appendChild(bubbleDiv);
+          overflowDiv.appendChild(bubbleDiv);
 
-      });
+        });
 
-      chatMessage.appendChild(overflowDiv);
+        chatMessage.appendChild(overflowDiv);
+      }
+      else {
+        let overflowCustomContainer = document.querySelector('.chat[data-chat=\'' + chatId + '\'] .overflowCustom');
+        chatMessagesData.forEach(element => {
 
+          let bubbleDiv = document.createElement("div");
+          bubbleDiv.classList.add("bubble");
+
+          if (element.message.senderId == currentUserId)
+            bubbleDiv.classList.add("me");
+          else
+            bubbleDiv.classList.add("you");
+
+          bubbleDiv.textContent = element.message.content;
+
+          overflowCustomContainer.appendChild(bubbleDiv);
+
+        });
+      }
 
 
     }
@@ -1742,6 +1770,14 @@
             }
           })
         });
+        let chatMessages = [];
+          chatMessages.push({
+            message: {
+              senderId: currentUserId,
+              content: chatMessageVal
+            }
+          });
+        addChatMessages(chatId,chatMessages);
         var messageInput = document.getElementById("chatMessageInput");
         messageInput.value = "";
       }

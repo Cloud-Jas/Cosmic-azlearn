@@ -30,19 +30,24 @@ namespace CosmicChat.EventGrid.Subscribers
 
          var cosmosChat = ((JObject)(eventGridEvent.Data)).ToObject<CosmosChat>();
 
+         //interchange username logic : TODO revisit for groups implementation
+
+         int i = 0;
+
          foreach (var user in cosmosChat.userDetails)
          {
+            if (i == 1) i = 0;
             var cosmosUserChat = new CosmosUserChat
             {
                chatId = cosmosChat.chat.id,
                lastMessage = cosmosChat.message.content,
                senderId = cosmosChat.message.senderId,
-               chatName = user.name,
+               chatName = cosmosChat.userDetails[i++].name,
                id = cosmosChat.chat.id,
                userId = user.id,
                lastMessageTimestamp= Convert.ToInt64(DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             };
-            await cosmosUserChatCreate.AddAsync(cosmosUserChat);
+            await cosmosUserChatCreate.AddAsync(cosmosUserChat);            
          }
 
       }
