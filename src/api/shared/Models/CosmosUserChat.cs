@@ -10,6 +10,7 @@ namespace CosmicChat.Shared.Models
    {
       public string id { get; set; }
       public string userId { get; set; }
+      public string toUserId { get; set; }
       public string senderId { get; set; }      
       public string chatId { get; set; }
       public string chatName { get; set; }

@@ -1479,7 +1479,7 @@
 
       chatsData.forEach(async (element, i) => {
 
-        await addChatItems(element.chatName, element.userId, element.chatId, element.lastMessage, element.lastMessageTimestamp);
+        await addChatItems(element.chatName, element.toUserId, element.chatId, element.lastMessage, element.lastMessageTimestamp);
         var chatMessages = await getAllMessagesByChatId(element.chatId);
         var chatMessagesData = await chatMessages.json();
         await addChatMessages(element.chatId, chatMessagesData);
@@ -1750,18 +1750,20 @@
         console.log(chatId);
         var userDetails = [];
         userDetails.push({
-          name: toUserName,
+          name: currentUserName,
           id: currentUserId
         });
         userDetails.push({
           id: toUserId,
-          name: currentUserName
+          name: toUserName
         });
         const response = await fetch('/api/chat', {
           method: "POST",
           body: JSON.stringify({
             chat: {
-              id: chatId
+              id: chatId,
+              userId:toUserId,
+              userName:toUserName
             },
             userDetails: userDetails,
             message: {
