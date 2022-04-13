@@ -1411,11 +1411,13 @@
     }
 
     function joinGroup(ws, group, increment = 0) {
-      ws.send(JSON.stringify({
-        type: 'joinGroup',
-        group: group,
-        ackId: 1 + increment
-      }));
+      if (ws != null) {
+        ws.send(JSON.stringify({
+          type: 'joinGroup',
+          group: group,
+          ackId: 1 + increment
+        }));
+      }
     }
 
     function sendToGroup(ws, group, data) {
@@ -1512,7 +1514,7 @@
           console.log(currentUserId);
           toastr.success("" + data.data.userName + " is online from " + data.data.city + "," + data.data.state);
         }
-        else if (data.from == "group" && data.data.type == "MessageSentEvent" &&  data.data.senderId!=currentUserId) {
+        else if (data.from == "group" && data.data.type == "MessageSentEvent" && data.data.senderId != currentUserId) {
           console.log(data.data);
           let chatMessages = [];
           chatMessages.push({
@@ -1600,7 +1602,7 @@
         await addChatMessages(chatId);
         refreshChatContainer();
         setAciveChat(document.querySelector('.person[data-chat=\'' + chatId + '\']'));
-        joinGroup(webSocket,chatId,Date.now());
+        joinGroup(webSocket, chatId, Date.now());
       }
 
       else {
@@ -1749,17 +1751,17 @@
         var toUserId = document.querySelector('ul.people .active').getAttribute("data-userId");
         var toUserName = document.querySelector('ul.people .active').getAttribute("data-name");
         console.log(chatId);
-        var userDetails = []; 
+        var userDetails = [];
         userDetails.push({
           id: currentUserId,
-          toUser:{
-            id:toUserId,
+          toUser: {
+            id: toUserId,
             name: toUserName
           }
         });
         userDetails.push({
-          toUser:{
-            id:currentUserId,
+          toUser: {
+            id: currentUserId,
             name: currentUserName
           },
           id: toUserId
@@ -1778,13 +1780,13 @@
           })
         });
         let chatMessages = [];
-          chatMessages.push({
-            message: {
-              senderId: currentUserId,
-              content: chatMessageVal
-            }
-          });
-        addChatMessages(chatId,chatMessages);
+        chatMessages.push({
+          message: {
+            senderId: currentUserId,
+            content: chatMessageVal
+          }
+        });
+        addChatMessages(chatId, chatMessages);
         var messageInput = document.getElementById("chatMessageInput");
         messageInput.value = "";
       }
