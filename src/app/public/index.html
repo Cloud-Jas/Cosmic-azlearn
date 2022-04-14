@@ -1290,7 +1290,7 @@
       if (chat.container.querySelector('[data-chat="' + chat.person + '"]') != null) {
         chat.container.querySelector('[data-chat="' + chat.person + '"]').classList.add('active-chat');
       }
-      var overflowCustomContainer = chat.container.querySelector('[data-chat="' + chat.person + '" .overflowCustom]');
+      var overflowCustomContainer = chat.container.querySelector('[data-chat="' + chat.person + '"] .overflowCustom');
       if (overflowCustomContainer != null)
         overflowCustomContainer.scrollTop = overflowCustomContainer.scrollHeight;
     }
@@ -1434,7 +1434,7 @@
         joinGroup(ws, `global-location`, Date.now());
         console.log("websoket joining groups");
         var chatGlobalpubsub = 'chats-' + currentUserId;
-        joinGroup(ws, chatGlobalpubsub, Date.now() + Math.random());
+        joinGroup(ws, chatGlobalpubsub, Date.now()+10);
         console.log(chatGlobalpubsub);
       }, 1000);
 
