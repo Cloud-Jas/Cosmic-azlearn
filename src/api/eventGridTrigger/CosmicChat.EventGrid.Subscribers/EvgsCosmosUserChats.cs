@@ -28,22 +28,25 @@ namespace CosmicChat.EventGrid.Subscribers
       {
          _logger.LogInformation(eventGridEvent.Data.ToString());
 
-         var cosmosChat = ((JObject)(eventGridEvent.Data)).ToObject<CosmosChat>();
-         
-         foreach (var user in cosmosChat.userDetails)
+         if (eventGridEvent.EventType.Equals("CosmosDb.CosmiChats.Updated"))
          {
-            var cosmosUserChat = new CosmosUserChat
+            var cosmosChat = ((JObject)(eventGridEvent.Data)).ToObject<CosmosChat>();
+
+            foreach (var user in cosmosChat.userDetails)
             {
-               chatId = cosmosChat.chat.id,
-               lastMessage = cosmosChat.message.content,
-               senderId = cosmosChat.message.senderId,
-               chatName = user.toUser.name,
-               toUserId = user.toUser.id,
-               id = cosmosChat.chat.id,
-               userId = user.id,
-               lastMessageTimestamp = Convert.ToInt64(DateTimeOffset.UtcNow.ToUnixTimeSeconds())
-            };
-            await cosmosUserChatCreate.AddAsync(cosmosUserChat);            
+               var cosmosUserChat = new CosmosUserChat
+               {
+                  chatId = cosmosChat.chat.id,
+                  lastMessage = cosmosChat.message.content,
+                  senderId = cosmosChat.message.senderId,
+                  chatName = user.toUser.name,
+                  toUserId = user.toUser.id,
+                  id = cosmosChat.chat.id,
+                  userId = user.id,
+                  lastMessageTimestamp = Convert.ToInt64(DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+               };
+               await cosmosUserChatCreate.AddAsync(cosmosUserChat);
+            }
          }
 
       }
