@@ -1434,7 +1434,7 @@
         joinGroup(ws, `global-location`, Date.now());
         console.log("websoket joining groups");
         var chatGlobalpubsub = 'chats-' + currentUserId;
-        joinGroup(ws, chatGlobalpubsub, Date.now());
+        joinGroup(ws, chatGlobalpubsub, Date.now() + Math.random());
         console.log(chatGlobalpubsub);
       }, 1000);
 
