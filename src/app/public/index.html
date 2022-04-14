@@ -1461,6 +1461,11 @@
               document.querySelector('.chat[data-chat=\'' + data.data.chatId + '\'] .overflowCustom .typingMessageDiv').remove();
           }, 2000)
         }
+        else if (data.from == "group" && data.data.type == "ChatsBarUpdatedEvent") {
+
+          await addChatItems(data.data.chatName,data.data.toUserId,data.data.chatId,data.data.lastMessage,data.data.lastMessageTimestamp);
+
+        }
 
         console.log("websocket message", data);
       }
