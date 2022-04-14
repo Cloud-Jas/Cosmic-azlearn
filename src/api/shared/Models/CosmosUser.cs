@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CosmicChat.Shared.Models
-{
-   // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+{   
    public class Country
    {
       public string code { get; set; }
       public string subDivision { get; set; }
       public string secondarySubDivision { get; set; }
       public string isoCode3 { get; set; }
+      public string name { get; set; }
    }
 
    public class Street
