@@ -1428,7 +1428,7 @@
 
       setTimeout(ws.onopen = () => {
         updateStatus('Connected');
-        joinGroup(ws, `global-location`);
+        joinGroup(ws, `global-location`,Date.now());
       }, 1000);
 
       ws.onmessage = async (e) => {
