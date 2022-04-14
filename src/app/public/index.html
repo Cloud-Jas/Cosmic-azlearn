@@ -1606,8 +1606,8 @@
         overflowCustomContainer.appendChild(typingDiv);
         overflowCustomContainer.scrollTop = overflowCustomContainer.scrollHeight;
         setTimeout(() => {
-            if (document.querySelector('.chat[data-chat=\'' + data.data.chatId + '\'] .overflowCustom .typingMessageDiv') != null)
-              document.querySelector('.chat[data-chat=\'' + data.data.chatId + '\'] .overflowCustom .typingMessageDiv').remove();
+            if (document.querySelector('.chat[data-chat=\'' + chatId + '\'] .overflowCustom .typingMessageDiv') != null)
+              document.querySelector('.chat[data-chat=\'' + chatId + '\'] .overflowCustom .typingMessageDiv').remove();
           }, 2000)
       }
     }
