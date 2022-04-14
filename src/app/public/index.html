@@ -1596,7 +1596,7 @@
 
 
     async function addTypingChatMessages(chatId, message) {
-      if (document.querySelector('.chat[data-chat=\'' + data.data.chatId + '\'] .overflowCustom .typingMessageDiv') == null) {
+      if (document.querySelector('.chat[data-chat=\'' + chatId + '\'] .overflowCustom .typingMessageDiv') == null) {
         let overflowCustomContainer = document.querySelector('.chat[data-chat=\'' + chatId + '\'] .overflowCustom');
         let typingDiv = document.createElement("div");
         typingDiv.classList.add("typingMessageDiv");
