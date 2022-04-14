@@ -1596,12 +1596,14 @@
 
 
     async function addTypingChatMessages(chatId, message) {
-      let overflowCustomContainer = document.querySelector('.chat[data-chat=\'' + chatId + '\'] .overflowCustom');
-      let typingDiv = document.createElement("div");
-      typingDiv.classList.add("typingMessageDiv");
-      typingDiv.textContent = message;
-      overflowCustomContainer.appendChild(typingDiv);
-      overflowCustomContainer.scrollTop = overflowCustomContainer.scrollHeight;
+      if (document.querySelector('.chat[data-chat=\'' + data.data.chatId + '\'] .overflowCustom .typingMessageDiv') == null) {
+        let overflowCustomContainer = document.querySelector('.chat[data-chat=\'' + chatId + '\'] .overflowCustom');
+        let typingDiv = document.createElement("div");
+        typingDiv.classList.add("typingMessageDiv");
+        typingDiv.textContent = message;
+        overflowCustomContainer.appendChild(typingDiv);
+        overflowCustomContainer.scrollTop = overflowCustomContainer.scrollHeight;
+      }
     }
 
 
@@ -1632,7 +1634,7 @@
 
         });
 
-        chatMessage.appendChild(overflowDiv);        
+        chatMessage.appendChild(overflowDiv);
         overflowDiv.scrollTop = overflowDiv.scrollHeight;
       }
       else {
