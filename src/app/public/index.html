@@ -1459,7 +1459,7 @@
           setTimeout(() => {
             if (document.querySelector('.chat[data-chat=\'' + data.data.chatId + '\'] .overflowCustom .typingMessageDiv') != null)
               document.querySelector('.chat[data-chat=\'' + data.data.chatId + '\'] .overflowCustom .typingMessageDiv').remove();
-          }, 100)
+          }, 2000)
         }
 
         console.log("websocket message", data);
