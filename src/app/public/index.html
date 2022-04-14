@@ -1456,11 +1456,7 @@
           addChatMessages(data.data.chatId, chatMessages);
         }
         else if (data.from == "group" && data.data.type == "typingMessageEvent" && data.data.senderId != currentUserId) {
-          await addTypingChatMessages(data.data.chatId, data.data.message);
-          setTimeout(() => {
-            if (document.querySelector('.chat[data-chat=\'' + data.data.chatId + '\'] .overflowCustom .typingMessageDiv') != null)
-              document.querySelector('.chat[data-chat=\'' + data.data.chatId + '\'] .overflowCustom .typingMessageDiv').remove();
-          }, 2000)
+          await addTypingChatMessages(data.data.chatId, data.data.message);        
         }
         else if (data.from == "group" && data.data.type == "ChatsBarUpdatedEvent") {
 
@@ -1609,6 +1605,10 @@
         typingDiv.textContent = message;
         overflowCustomContainer.appendChild(typingDiv);
         overflowCustomContainer.scrollTop = overflowCustomContainer.scrollHeight;
+        setTimeout(() => {
+            if (document.querySelector('.chat[data-chat=\'' + data.data.chatId + '\'] .overflowCustom .typingMessageDiv') != null)
+              document.querySelector('.chat[data-chat=\'' + data.data.chatId + '\'] .overflowCustom .typingMessageDiv').remove();
+          }, 2000)
       }
     }
 
