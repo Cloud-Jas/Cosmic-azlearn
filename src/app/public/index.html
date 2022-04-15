@@ -1434,7 +1434,7 @@
         joinGroup(ws, `global-location`, Date.now());
         console.log("websoket joining groups");
         var chatGlobalpubsub = 'chats-' + currentUserId;
-        joinGroup(ws, chatGlobalpubsub, Date.now()+10);
+        joinGroup(ws, chatGlobalpubsub, Date.now() + 10);
         console.log(chatGlobalpubsub);
       }, 1000);
 
@@ -1466,7 +1466,10 @@
         }
         else if (data.from == "group" && data.data.type == "ChatsBarUpdatedEvent") {
 
-          await addChatItems(data.data.chatName, data.data.toUserId, data.data.chatId, data.data.lastMessage, data.data.lastMessageTimestamp);
+          if (document.querySelector('.person[data-chat=\'' + data.data.chatId + '\']') != null)
+            await reinitChatItems(data.data.chatName, data.data.toUserId, data.data.chatId, data.data.lastMessage, data.data.lastMessageTimestamp);
+          else
+            await addChatItems(data.data.chatName, data.data.toUserId, data.data.chatId, data.data.lastMessage, data.data.lastMessageTimestamp);
 
         }
 
@@ -1557,6 +1560,15 @@
         setAciveChat(document.querySelector('.person[data-chat=\'' + chatId + '\']'));
       }
 
+    }
+
+    async function reinitChatItems(name, userId, chatId, message, timestamp) {
+      if (timestamp != null) {
+        var d = new Date(0);
+        d.setUTCSeconds(timestamp);
+      }
+      document.querySelector('.person[data-chat=\'' + chatId + '\'] .time').textContent = timestamp == null ? formatAMPM(new Date()) : formatAMPM(d);
+      document.querySelector('.person[data-chat=\'' + chatId + '\'] .preview').textContent = message;
     }
 
     async function addChatItems(name, userId, chatId, message = null, timestamp = null) {
