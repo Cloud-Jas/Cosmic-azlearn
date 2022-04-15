@@ -32,9 +32,11 @@ namespace CosmicChat.EventGrid.Subscribers
          {
             var userChat = ((JObject)(eventGridEvent.Data)).ToObject<CosmosUserChat>();
 
+            var groupName = "chats-" + userChat.userId;
+
             await operation.AddAsync(new SendToGroupAction
             {
-               Group = "chats-"+userChat.userId,
+               Group = groupName,
                Data = BinaryData.FromObjectAsJson(new
                {
                   chatName=userChat.chatName,
