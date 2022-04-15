@@ -34,7 +34,7 @@ namespace CosmicChat.EventGrid.Subscribers
 
             await operation.AddAsync(new SendToGroupAction
             {
-               Group = userChat.chatId,
+               Group = userChat.userId,
                Data = BinaryData.FromObjectAsJson(new
                {
                   chatName=userChat.chatName,
