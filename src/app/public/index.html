@@ -1432,8 +1432,8 @@
       setTimeout(ws.onopen = () => {
         updateStatus('Connected');
         joinGroup(ws, `global-location`, Date.now());
-        console.log("websoket joining groups");        
-        joinGroup(ws, "chatsBarUpdate", Date.now()+10);        
+        console.log("websoket joining groups");
+        joinGroup(ws, "chatsBarUpdate", Date.now() + 10);
       }, 1000);
 
       ws.onmessage = async (e) => {
@@ -1463,9 +1463,8 @@
           await addTypingChatMessages(data.data.chatId, data.data.message);
         }
         else if (data.from == "group" && data.data.type == "ChatsBarUpdatedEvent") {
-
-          await addChatItems(data.data.chatName, data.data.toUserId, data.data.chatId, data.data.lastMessage, data.data.lastMessageTimestamp);
-
+          if (data.data.userId == currentUserId)
+            await addChatItems(data.data.chatName, data.data.toUserId, data.data.chatId, data.data.lastMessage, data.data.lastMessageTimestamp);
         }
 
         console.log("websocket message", data);

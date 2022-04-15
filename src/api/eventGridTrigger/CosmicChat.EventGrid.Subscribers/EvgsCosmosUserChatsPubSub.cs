@@ -38,6 +38,7 @@ namespace CosmicChat.EventGrid.Subscribers
                Data = BinaryData.FromObjectAsJson(new
                {
                   chatName=userChat.chatName,
+                  userId=userChat.userId,
                   toUserId=userChat.toUserId,
                   chatId=userChat.chatId,
                   lastMessage=userChat.lastMessage,
