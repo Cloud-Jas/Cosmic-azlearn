@@ -1433,7 +1433,7 @@
         updateStatus('Connected');
         joinGroup(ws, `global-location`, Date.now());
         console.log("websoket joining groups");        
-        joinGroup(ws, currentUserId, Date.now()+10);        
+        joinGroup(ws, "chatsBarUpdate", Date.now()+10);        
       }, 1000);
 
       ws.onmessage = async (e) => {
