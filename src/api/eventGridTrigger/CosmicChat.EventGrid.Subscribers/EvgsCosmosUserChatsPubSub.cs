@@ -30,20 +30,20 @@ namespace CosmicChat.EventGrid.Subscribers
 
          if (eventGridEvent.EventType.Equals("CosmosDb.CosmiUserChats.Updated"))
          {
-            var userChat = ((JObject)(eventGridEvent.Data)).ToObject<CosmosUserChat>();            
+            var userChat = ((JObject)(eventGridEvent.Data)).ToObject<CosmosUserChat>();
 
             await operation.AddAsync(new SendToGroupAction
             {
-               Group = "chatsBarUpdate",
+               Group = "chats-" + userChat.userId,
                Data = BinaryData.FromObjectAsJson(new
                {
-                  chatName=userChat.chatName,
-                  userId=userChat.userId,
-                  toUserId=userChat.toUserId,
-                  chatId=userChat.chatId,
-                  lastMessage=userChat.lastMessage,
-                  lastMessageTimestamp=userChat.lastMessageTimestamp,
-                  type="ChatsBarUpdatedEvent"
+                  chatName = userChat.chatName,
+                  userId = userChat.userId,
+                  toUserId = userChat.toUserId,
+                  chatId = userChat.chatId,
+                  lastMessage = userChat.lastMessage,
+                  lastMessageTimestamp = userChat.lastMessageTimestamp,
+                  type = "ChatsBarUpdatedEvent"
                }),
                DataType = WebPubSubDataType.Json
             });
