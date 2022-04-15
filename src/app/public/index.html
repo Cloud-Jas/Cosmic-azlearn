@@ -1432,10 +1432,8 @@
       setTimeout(ws.onopen = () => {
         updateStatus('Connected');
         joinGroup(ws, `global-location`, Date.now());
-        console.log("websoket joining groups");
-        var chatGlobalpubsub = 'chats-' + currentUserId;
-        joinGroup(ws, chatGlobalpubsub, Date.now()+10);
-        console.log(chatGlobalpubsub);
+        console.log("websoket joining groups");        
+        joinGroup(ws, currentUserId, Date.now()+10);        
       }, 1000);
 
       ws.onmessage = async (e) => {
