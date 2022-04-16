@@ -42,7 +42,7 @@ namespace CosmicChat.Shared.Models
       public string name { get; set; }
       public List<string> roles { get; set; }
       public Address address { get; set; }
-      public string _ts { get; set; }
+      public long _ts { get; set; }
    }
 
 

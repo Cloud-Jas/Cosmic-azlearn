@@ -17,6 +17,6 @@ namespace CosmicChat.Shared.Models
    {
       public string id { get; set; }
       public Timestamp timestamp { get; set; }
-      public int _ts { get; set; }
+      public long _ts { get; set; }
    }
 }
