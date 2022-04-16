@@ -46,12 +46,12 @@ namespace CosmicChat.EventGrid.Subscribers
                   score = 0,
                   task = new LeaderboardTask
                   {
-                     id = null
+                     id = String.Empty
                   },
                   user = new User
                   {
-                     id = Cosmicuser?.id,
-                     name = Cosmicuser?.name
+                     id = Cosmicuser.id,
+                     name = Cosmicuser.name
                   }
                });
 

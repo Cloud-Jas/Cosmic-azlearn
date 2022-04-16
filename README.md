@@ -37,6 +37,19 @@ In this architecture, Azure StaticWebApps is used as our hosting platform that h
 without having to maintain any of the underlying systems. In this architecture, Azure Functions can host APIs, and any work that needs to be done asynchronously, such as running periodic jobs and computing statistics over a certain period of time.
 
 
+
+
+#Workflow
+
+The solution is built on 
+
+- Clients
+- Websockets for messaging
+- APIs and business logic for events processing
+- Storage and infrastructure services
+
+
+
 # Application Screens
 
 ![https://cosmospark.iamdivakarkumar.com/](./images/Cosmic-Azlearn-1.png)
