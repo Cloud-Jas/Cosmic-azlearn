@@ -29,34 +29,42 @@ namespace CosmicChat.EventGrid.Subscribers
       {
          _logger.LogInformation(eventGridEvent.Data.ToString());
 
-         if (eventGridEvent.EventType.Equals("CosmosDb.CosmicUsers.Created"))
+         try
          {
-            _logger.LogInformation("CosmicUsers created event fired");
 
-            var Cosmicuser = ((JObject)(eventGridEvent.Data)).ToObject<CosmosUser>();
-
-            _logger.LogInformation(JsonConvert.SerializeObject(Cosmicuser));
-
-            var leaderBoard = new CosmosLeaderboard
+            if (eventGridEvent.EventType.Equals("CosmosDb.CosmicUsers.Created"))
             {
-               id = Guid.NewGuid().ToString("N"),
-               score = 0,
-               task =
+               _logger.LogInformation("CosmicUsers created event fired");
+
+               var Cosmicuser = ((JObject)(eventGridEvent.Data)).ToObject<CosmosUser>();
+
+               _logger.LogInformation(JsonConvert.SerializeObject(Cosmicuser));
+
+               var leaderBoard = new CosmosLeaderboard
+               {
+                  id = Guid.NewGuid().ToString("N"),
+                  score = 0,
+                  task =
                {
                   id=null
                },
-               user =
+                  user =
                {
                   id=Cosmicuser?.id,
                   name=Cosmicuser?.name
                }
-            };
+               };
 
-            _logger.LogInformation(JsonConvert.SerializeObject(leaderBoard));
+               _logger.LogInformation(JsonConvert.SerializeObject(leaderBoard));
 
-            await leaderBoardCreate.AddAsync(leaderBoard);
+               await leaderBoardCreate.AddAsync(leaderBoard);
 
-            _logger.LogInformation("leaderboard updated");
+               _logger.LogInformation("leaderboard updated");
+            }
+         }
+         catch (Exception ex)
+         {
+            _logger.LogDebug("Runtime exception",ex);
          }
 
       }
