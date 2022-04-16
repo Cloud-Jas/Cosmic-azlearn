@@ -42,8 +42,8 @@ namespace CosmicChat.EventGrid.Subscribers
                },
                user =
                {
-                  id=user.id,
-                  name=user.name
+                  id=user?.id,
+                  name=user?.name
                }
             };
 
