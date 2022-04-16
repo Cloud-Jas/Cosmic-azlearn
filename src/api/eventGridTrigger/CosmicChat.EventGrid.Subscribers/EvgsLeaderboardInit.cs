@@ -33,9 +33,9 @@ namespace CosmicChat.EventGrid.Subscribers
          {
             _logger.LogInformation("CosmicUsers created event fired");
 
-            var user = ((JObject)(eventGridEvent.Data)).ToObject<CosmosUser>();
+            var Cosmicuser = ((JObject)(eventGridEvent.Data)).ToObject<CosmosUser>();
 
-            _logger.LogInformation(JsonConvert.SerializeObject(user));
+            _logger.LogInformation(JsonConvert.SerializeObject(Cosmicuser));
 
             var leaderBoard = new CosmosLeaderboard
             {
@@ -47,12 +47,16 @@ namespace CosmicChat.EventGrid.Subscribers
                },
                user =
                {
-                  id=user?.id,
-                  name=user?.name
+                  id=Cosmicuser?.id,
+                  name=Cosmicuser?.name
                }
             };
 
+            _logger.LogInformation(JsonConvert.SerializeObject(leaderBoard));
+
             await leaderBoardCreate.AddAsync(leaderBoard);
+
+            _logger.LogInformation("leaderboard updated");
          }
 
       }
