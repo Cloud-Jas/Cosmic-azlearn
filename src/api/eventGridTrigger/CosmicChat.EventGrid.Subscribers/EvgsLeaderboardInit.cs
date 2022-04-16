@@ -40,7 +40,7 @@ namespace CosmicChat.EventGrid.Subscribers
 
                _logger.LogInformation(JsonConvert.SerializeObject(Cosmicuser));
 
-               var leaderBoard = new CosmosLeaderboard
+               var leaderBoard = new CosmosLeaderboard()
                {
                   id = Guid.NewGuid().ToString("N"),
                   score = 0,
