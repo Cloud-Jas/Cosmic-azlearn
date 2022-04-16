@@ -58,31 +58,7 @@ Once users have sent a message to another person from the specified location in 
 <br> The source of the frontend is found in <b>src/app</b> and consists of a plain HTML + Javascript application.
 
 2. Fontend communicates with the backend APIs to perform business use cases. We have used Azure functions HTTP Triggers to expose these APIs. The source of this backend API can be found in <b>src/api/httpTrigger and consists of a .NET 6 Azure function app.
-<br> 
-
-		- CreateChat: [POST] http://localhost:7071/api/chat
-
-        - CreateScore: [POST] http://localhost:7071/api/leaderboard
-
-        - CreateUser: [POST] http://localhost:7071/api/user
-
-        - GetAllChatsByUserId: [GET] http://localhost:7071/api/chats/user/{userId}
-
-        - GetAllMessagesByChatId: [GET] http://localhost:7071/api/chats/{chatId}
-
-        - GetAllUsers: [GET] http://localhost:7071/api/users
-
-        - GetAllUsersByCountryCode: [GET] http://localhost:7071/api/users/{countryCode}
-
-        - GetConnectionDetails: [GET] http://localhost:7071/api/pubsub/connection
-
-        - GetCosmosLeaderBoards: [GET] http://localhost:7071/api/leaderboards
-
-        - GetToken: [GET] http://localhost:7071/api/azMap/token
-
-        - GetUserById: [GET] http://localhost:7071/api/user/{userId}
-
-        - LookupAddress: [GET] http://localhost:7071/api/azMap/addressLookup/{latitude}/{longitude}
+<br> - CreateChat: [POST] http://localhost:7071/api/chat <br> - CreateScore: [POST] http://localhost:7071/api/leaderboard <br> - CreateUser: [POST] http://localhost:7071/api/user <br> - GetAllChatsByUserId: [GET] http://localhost:7071/api/chats/user/{userId} <br> - GetAllMessagesByChatId: [GET] http://localhost:7071/api/chats/{chatId} <br> - GetAllUsers: [GET] http://localhost:7071/api/users <br> - GetAllUsersByCountryCode: [GET] http://localhost:7071/api/users/{countryCode} <br> - GetConnectionDetails: [GET] http://localhost:7071/api/pubsub/connection <br> - GetCosmosLeaderBoards: [GET] http://localhost:7071/api/leaderboards <br> - GetToken: [GET] http://localhost:7071/api/azMap/token <br> - GetUserById: [GET] http://localhost:7071/api/user/{userId} <br> - LookupAddress: [GET] http://localhost:7071/api/azMap/addressLookup/{latitude}/{longitude}
 
 
 
