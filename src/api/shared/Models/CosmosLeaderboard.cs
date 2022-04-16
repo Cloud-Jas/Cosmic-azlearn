@@ -12,7 +12,7 @@ namespace CosmicChat.Shared.Models
       public User user { get; set; }
       public LeaderboardTask task { get; set; }
       public int score { get; set; }
-      public int _ts { get; set; }
+      public long _ts { get; set; }
    }
 
    public class LeaderboardTask
