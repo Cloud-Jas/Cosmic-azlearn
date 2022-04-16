@@ -1468,8 +1468,14 @@
 
           if (document.querySelector('.person[data-chat=\'' + data.data.chatId + '\']') != null)
             await reinitChatItems(data.data.chatId, data.data.lastMessage, data.data.lastMessageTimestamp);
-          else
+          else {
             await addChatItems(data.data.chatName, data.data.toUserId, data.data.chatId, data.data.lastMessage, data.data.lastMessageTimestamp);
+            friends.all.forEach(f => {
+              f.addEventListener('mousedown', () => {
+                f.classList.contains('active') || setAciveChat(f)
+              })
+            });
+          }
         }
         console.log("websocket message", data);
       }
@@ -1544,8 +1550,7 @@
     }
     async function addChat(toUserId, toUserName) {
 
-      if (toUserId == currentUserId)
-      {
+      if (toUserId == currentUserId) {
         toastr.error("Please try to chat with someone else")
         return;
       }
@@ -1593,7 +1598,7 @@
       var chats = document.querySelector('ul.people');
       let chatItem = document.createElement('li');
       chatItem.classList.add("person");
-      chatItem.classList.add("active");
+      //chatItem.classList.add("active");
       let avatarItem = document.createElement("img");
       avatarItem.src = avatarUrl;
       chatItem.appendChild(avatarItem);
