@@ -31,7 +31,11 @@ namespace CosmicChat.EventGrid.Subscribers
 
          if (eventGridEvent.EventType.Equals("CosmosDb.CosmicUsers.Created"))
          {
-            var user = JsonConvert.DeserializeObject<CosmosUser>(eventGridEvent.Data.ToString());
+            _logger.LogInformation("CosmicUsers created event fired");
+
+            var user = ((JObject)(eventGridEvent.Data)).ToObject<CosmosUser>();
+
+            _logger.LogInformation(JsonConvert.SerializeObject(user));
 
             var leaderBoard = new CosmosLeaderboard
             {
