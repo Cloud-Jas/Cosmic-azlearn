@@ -41,12 +41,25 @@ without having to maintain any of the underlying systems. In this architecture, 
 
 #Workflow
 
-The solution is built on 
+The solution is built on five pillars, including:
 
 - Clients
-- Websockets for messaging
-- APIs and business logic for events processing
+- Communication components
+- Events processing components
+- APIs and business logic 
 - Storage and infrastructure services
+
+
+1. Device client (website/mobile) can access this application in browser. Browser pulls static resources and product images from Azure Static WebApps. We have Azure maps integrated in our landing page
+that requires user to allow the location permissions. Once permission is provided user's location will be added as a marker on the map.
+
+On the lower portion of the maps, user could find a place where list of tasks will be asigned dynamically for each users. To complete a task one should speak with a person from the specified location 
+on the tasks. In order to do that , search for the particular location and select on any marker around that region, now users will be prompted to chat with them. Click on the button to initiate talks.
+Once users have sent a message to another person from the specified location in the task he/she will be awarded with specific points based on the criticality of each tasks
+
+Users can also check their rankings in the lower right corner of the screen, where the leaderboard is placed.
+
+2. 
 
 
 
