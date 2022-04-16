@@ -24,13 +24,14 @@ namespace CosmicChat.EventGrid.Subscribers
          _logger = logger;
       }
       [FunctionName("LeaderboardCreate")]
-      public async Task LeaderboardCreate([EventGridTrigger] EventGridEvent eventGridEvent, [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicLeaderboards", Connection = "CosmicDBIdentity")] IAsyncCollector<CosmosLeaderboard> leaderBoardCreate)
+      public async Task LeaderboardCreate([EventGridTrigger] EventGridEvent eventGridEvent, 
+         [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicLeaderboards", Connection = "CosmicDBIdentity")] IAsyncCollector<CosmosLeaderboard> leaderBoardCreate)
       {
          _logger.LogInformation(eventGridEvent.Data.ToString());
 
          if (eventGridEvent.EventType.Equals("CosmosDb.CosmicUsers.Created"))
          {
-            var user = ((JObject)(eventGridEvent.Data)).ToObject<CosmosUser>();
+            var user = JsonConvert.DeserializeObject<CosmosUser>(eventGridEvent.Data.ToString());
 
             var leaderBoard = new CosmosLeaderboard
             {
