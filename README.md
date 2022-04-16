@@ -57,9 +57,23 @@ on the tasks. In order to do that , search for the particular location and selec
 Once users have sent a message to another person from the specified location in the task he/she will be awarded with specific points based on the criticality of each tasks.Users can also check their rankings in the lower right corner of the screen, where the leaderboard is placed.
 <br> The source of the frontend is found in <b>src/app</b> and consists of a plain HTML + Javascript application.
 
-2. Fontend communicates with the backend APIs to perform business use cases. We have used Azure functions HTTP Triggers to expose these APIs. The source of this backend API can be found in <b>src/api/httpTrigger and consists of a .NET 6 Azure function app.
-<br> - CreateChat: [POST] http://localhost:7071/api/chat <br> - CreateScore: [POST] http://localhost:7071/api/leaderboard <br> - CreateUser: [POST] http://localhost:7071/api/user <br> - GetAllChatsByUserId: [GET] http://localhost:7071/api/chats/user/{userId} <br> - GetAllMessagesByChatId: [GET] http://localhost:7071/api/chats/{chatId} <br> - GetAllUsers: [GET] http://localhost:7071/api/users <br> - GetAllUsersByCountryCode: [GET] http://localhost:7071/api/users/{countryCode} <br> - GetConnectionDetails: [GET] http://localhost:7071/api/pubsub/connection <br> - GetCosmosLeaderBoards: [GET] http://localhost:7071/api/leaderboards <br> - GetToken: [GET] http://localhost:7071/api/azMap/token <br> - GetUserById: [GET] http://localhost:7071/api/user/{userId} <br> - LookupAddress: [GET] http://localhost:7071/api/azMap/addressLookup/{latitude}/{longitude}
+2. Fontend communicates with the backend APIs to perform business use cases. We have used Azure functions HTTP Triggers to expose these APIs. The source of this backend API can be found in **src/api/httpTrigger** and consists of a .NET 6 Azure function app.
 
+| Verb  |  FunctionName  | Description
+| ------------ | ------------ |
+| POST | CreateChat | test |
+| POST | CreateUser | test |
+| GET | GetAllChatsByUserId | test |
+| GET | GetAllMessagesByChatId | test |
+| GET | GetAllUsers | test |
+| GET | GetAllUsersByCountryCode | test |
+| GET | GetConnectionDetails | test |
+| GET | GetCosmosLeaderBoards | test |
+| GET | GetToken | test |
+| GET | GetUserById | test |
+| GET | LookupAddress | test |
+
+3. For persisting the data we use Azure Cosmos DB and below are the containers 
 
 
 # Application Screens

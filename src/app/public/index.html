@@ -1037,7 +1037,7 @@
           <div class="right">
             <div class="top"><span>To: <span class="name"></span></span></div>
             <div class="write">
-              <input id="chatMessageInput" type="text" onkeyup="typingMessage(this.value)" />
+              <input id="chatMessageInput" type="text" onkeyup="typingMessage(this.value,event)" />
               <a href="javascript:;" onclick="sendMessage()" class="write-link send"></a>
             </div>
           </div>
@@ -1227,6 +1227,7 @@
     let currentUserId, currentUserName;
     let toChatId;
     var map, geolocationControl, currentUser;
+    let chatIds = [];
     let avatarUrl = "https://static.toiimg.com/thumb/resizemode-4,msid-76729750,imgsize-249247,width-720/76729750.jpg"
 
     // Set the options that I want
@@ -1410,9 +1411,8 @@
       var chatsData = await chatsResponse.json();
       console.log(chatsData);
 
-
-      chatsData.forEach(async (element, i) => {
-
+      chatIds = [];
+      chatsData.forEach(async (element, i) => {        
         await addChatItems(element.chatName, element.toUserId, element.chatId, element.lastMessage, element.lastMessageTimestamp);
         var chatMessages = await getAllMessagesByChatId(element.chatId);
         var chatMessagesData = await chatMessages.json();
@@ -1437,6 +1437,11 @@
         joinGroup(ws, chatGlobalpubsub, Date.now() + 10);
         console.log(chatGlobalpubsub);
       }, 1000);
+
+
+      //get all tasks
+
+      await generateTaskItems();
 
       ws.onmessage = async (e) => {
         let data = JSON.parse(e.data);
@@ -1586,6 +1591,7 @@
     }
 
     async function addChatItems(name, userId, chatId, message = null, timestamp = null) {
+      chatIds.push(element.chatId);
       var githubResponse = await fetch("https://api.github.com/search/users?q=" + name + "+in%3Ausername");
       var data = (await githubResponse.json())
       console.log(data);
@@ -1698,6 +1704,53 @@
 
     }
 
+    async function generateTaskItems() {
+      var todoItemsResponse = await fetch('/api/tasks/users/' + currentUserId);
+      var taskItems = await todoItemsResponse.json();
+
+      let userTaskItems = [];
+
+      taskItems.forEach((item) => {
+        let todoItem = document.createElement("div");
+        todoItem.classList.add("todo-item");
+        todoItem.setAttribute("data-id", item.id);
+        todoItem.setAttribute("data-isCompleted", item.isCompleted);
+        let checkContainer = document.createElement("div");
+        checkContainer.classList.add("check");
+        let checkMark = document.createElement("div");
+        checkMark.classList.add("check-mark");
+        checkMark.innerHTML = '<img src="icon-check.svg">';
+        checkMark.addEventListener("click", function () {
+          markCompleted(item.id);
+        })
+        checkContainer.appendChild(checkMark);
+
+        let todoText = document.createElement("div");
+        todoText.classList.add("todo-text");
+        todoText.innerText = "Say 'Hi-CosmosPark' to a friend joined from " + item.taskDetail.country.subDivision + ", " + item.taskDetail.country.name;
+
+        if (item.isCompleted == true) {
+          checkMark.classList.add("checked");
+          todoText.classList.add("checked");
+        }
+        todoItem.appendChild(checkContainer);
+        todoItem.appendChild(todoText);
+        userTaskItems.push(todoItem)
+      })
+      document.querySelector(".todo-items").replaceChildren(...userTaskItems);
+
+
+    }
+
+
+    function markCompleted(id) {
+      let checkItem = document.querySelector('.todo-item[data-id=\'' + id + '\'] .check-mark');
+      document.querySelector('.todo-item[data-id=\'' + id + '\'] .check-mark').classList.contains("checked") ? checkItem.classList.remove("checked") : checkItem.classList.add("checked");
+      let todoItem = document.querySelector('.todo-item[data-id=\'' + id + '\'] .todo-text');
+      document.querySelector('.todo-item[data-id=\'' + id + '\'] .todo-text').classList.contains("checked") ? todoItem.classList.remove("checked") : todoItem.classList.add("checked");
+
+    }
+
     function checkCurrentDate(date) {
       var inputDate = new Date(date);
       var todaysDate = new Date();
@@ -1728,7 +1781,11 @@
     }
 
 
-    function typingMessage(value) {
+    function typingMessage(value, event) {
+      if (event.keyCode == 13) {
+        sendMessage();
+        return;
+      }
       console.log(value);
       chatMessageVal = value;
       var chatId = document.querySelector('ul.people .active').getAttribute("data-chat");
@@ -1742,7 +1799,7 @@
     }
 
     async function sendMessage() {
-      if (chatMessageVal != "") {
+      if (chatMessageVal != "" && document.querySelector('ul.people .active') != null) {
         var chatId = document.querySelector('ul.people .active').getAttribute("data-chat");
         var toUserId = document.querySelector('ul.people .active').getAttribute("data-userId");
         var toUserName = document.querySelector('ul.people .active').getAttribute("data-name");
@@ -1787,7 +1844,11 @@
         var messageInput = document.getElementById("chatMessageInput");
         messageInput.value = "";
       }
+      else {
+        toastr.error("Please try to enter a valid message or click on a chat to start conversation");
+      }
     }
+
 
 
     async function getUserById(userId) {
