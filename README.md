@@ -55,8 +55,34 @@ The solution is built on five pillars, including:
 that requires user to allow the location permissions. Once permission is provided user's location will be added as a marker on the map. <br> On the lower portion of the maps, user could find a place where list of tasks will be asigned dynamically for each users. To complete a task one should speak with a person from the specified location 
 on the tasks. In order to do that , search for the particular location and select on any marker around that region, now users will be prompted to chat with them. Click on the button to initiate talks.
 Once users have sent a message to another person from the specified location in the task he/she will be awarded with specific points based on the criticality of each tasks.Users can also check their rankings in the lower right corner of the screen, where the leaderboard is placed.
+<br> The source of the frontend is found in <b>src/app</b> and consists of a plain HTML + Javascript application.
 
-2. 
+2. Fontend communicates with the backend APIs to perform business use cases. We have used Azure functions HTTP Triggers to expose these APIs. The source of this backend API can be found in <b>src/api/httpTrigger and consists of a .NET 6 Azure function app.
+<br> 
+
+		- CreateChat: [POST] http://localhost:7071/api/chat
+
+        - CreateScore: [POST] http://localhost:7071/api/leaderboard
+
+        - CreateUser: [POST] http://localhost:7071/api/user
+
+        - GetAllChatsByUserId: [GET] http://localhost:7071/api/chats/user/{userId}
+
+        - GetAllMessagesByChatId: [GET] http://localhost:7071/api/chats/{chatId}
+
+        - GetAllUsers: [GET] http://localhost:7071/api/users
+
+        - GetAllUsersByCountryCode: [GET] http://localhost:7071/api/users/{countryCode}
+
+        - GetConnectionDetails: [GET] http://localhost:7071/api/pubsub/connection
+
+        - GetCosmosLeaderBoards: [GET] http://localhost:7071/api/leaderboards
+
+        - GetToken: [GET] http://localhost:7071/api/azMap/token
+
+        - GetUserById: [GET] http://localhost:7071/api/user/{userId}
+
+        - LookupAddress: [GET] http://localhost:7071/api/azMap/addressLookup/{latitude}/{longitude}
 
 
 
