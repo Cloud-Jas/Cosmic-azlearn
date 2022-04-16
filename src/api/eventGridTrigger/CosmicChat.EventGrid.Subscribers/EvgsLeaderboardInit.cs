@@ -64,7 +64,7 @@ namespace CosmicChat.EventGrid.Subscribers
          }
          catch (Exception ex)
          {
-            _logger.LogDebug("Runtime exception",ex);
+            _logger.LogError(ex.Message+ex.StackTrace.ToString());
          }
 
       }
