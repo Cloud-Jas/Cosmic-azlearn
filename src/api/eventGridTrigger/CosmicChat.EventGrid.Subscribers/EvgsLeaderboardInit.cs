@@ -24,7 +24,7 @@ namespace CosmicChat.EventGrid.Subscribers
          _logger = logger;
       }
       [FunctionName("LeaderboardCreate")]
-      public async Task LeaderboardCreate([EventGridTrigger] EventGridEvent eventGridEvent, 
+      public async Task LeaderboardCreate([EventGridTrigger] EventGridEvent eventGridEvent,
          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicLeaderboards", Connection = "CosmicDBIdentity")] IAsyncCollector<CosmosLeaderboard> leaderBoardCreate)
       {
          _logger.LogInformation(eventGridEvent.Data.ToString());
@@ -38,21 +38,21 @@ namespace CosmicChat.EventGrid.Subscribers
 
                var Cosmicuser = ((JObject)(eventGridEvent.Data)).ToObject<CosmosUser>();
 
-               _logger.LogInformation(JsonConvert.SerializeObject(Cosmicuser));                              
+               _logger.LogInformation(JsonConvert.SerializeObject(Cosmicuser));
 
                await leaderBoardCreate.AddAsync(new CosmosLeaderboard
                {
                   id = Guid.NewGuid().ToString("N"),
                   score = 0,
-                  task =
-               {
-                  id=null
-               },
-                  user =
-               {
-                  id=Cosmicuser?.id,
-                  name=Cosmicuser?.name
-               }
+                  task = new LeaderboardTask
+                  {
+                     id = null
+                  },
+                  user = new User
+                  {
+                     id = Cosmicuser?.id,
+                     name = Cosmicuser?.name
+                  }
                });
 
                _logger.LogInformation("leaderboard updated");
@@ -60,9 +60,9 @@ namespace CosmicChat.EventGrid.Subscribers
          }
          catch (Exception ex)
          {
-            _logger.LogError(ex.Message+ex.StackTrace.ToString());
+            _logger.LogError(ex.Message + ex.StackTrace.ToString());
          }
-         
+
       }
    }
 }
