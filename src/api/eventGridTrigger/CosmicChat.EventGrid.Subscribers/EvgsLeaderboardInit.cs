@@ -36,6 +36,10 @@ namespace CosmicChat.EventGrid.Subscribers
             {
                id = Guid.NewGuid().ToString("N"),
                score = 0,
+               task =
+               {
+                  id=null
+               },
                user =
                {
                   id=user.id,

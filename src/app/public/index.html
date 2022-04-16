@@ -995,7 +995,7 @@
   </style>
 </head>
 
-<body onload="getUserInfo()">
+<body>
   <nav class="navbar navbar-expand navbar-light bg-light" style="background-color: white !important;">
     <div id="online" style="display: none;" class="online-indicator">
       <span class="blink mr-2"></span>
@@ -1215,7 +1215,7 @@
     );    
   </script>
   <script>
-
+    document.addEventListener("DOMContentLoaded", getUserInfo);
     var SpeechSDK;
     var recognizer;
     var speechDisplayArea = document.getElementById('speechDisplayArea');
@@ -1370,35 +1370,35 @@
       console.log(userResponse);
       console.log("create/update user");
 
-       if (userResponse.status == 204) {
-      await fetch('/api/user', {
-        method: "POST",
-        body: JSON.stringify({
-          identityProvider: currentUser.clientPrincipal.identityProvider,
-          id: currentUserId,
-          name: currentUser.clientPrincipal.userDetails,
-          roles: currentUser.clientPrincipal.userRoles,
-          address: {
-            name: addressLookup.addresses[0].address.freeformAddress,
-            country: {
-              code: addressLookup.addresses[0].address.countryCode,
-              subDivision: addressLookup.addresses[0].address.countrySubdivision,
-              secondarySubDivision: addressLookup.addresses[0].address.countrySecondarySubdivision,
-              isoCode3: addressLookup.addresses[0].address.countryCodeISO3,
-              name: addressLookup.addresses[0].address.country
-            },
-            street: {
-              name: addressLookup.addresses[0].address.streetName,
-              nameAndNumber: addressLookup.addresses[0].address.streetNameAndNumber
-            },
-            position: {
-              latitude: latitude,
-              longitude: longitude
+      if (userResponse.status == 204) {
+        await fetch('/api/user', {
+          method: "POST",
+          body: JSON.stringify({
+            identityProvider: currentUser.clientPrincipal.identityProvider,
+            id: currentUserId,
+            name: currentUser.clientPrincipal.userDetails,
+            roles: currentUser.clientPrincipal.userRoles,
+            address: {
+              name: addressLookup.addresses[0].address.freeformAddress,
+              country: {
+                code: addressLookup.addresses[0].address.countryCode,
+                subDivision: addressLookup.addresses[0].address.countrySubdivision,
+                secondarySubDivision: addressLookup.addresses[0].address.countrySecondarySubdivision,
+                isoCode3: addressLookup.addresses[0].address.countryCodeISO3,
+                name: addressLookup.addresses[0].address.country
+              },
+              street: {
+                name: addressLookup.addresses[0].address.streetName,
+                nameAndNumber: addressLookup.addresses[0].address.streetNameAndNumber
+              },
+              position: {
+                latitude: latitude,
+                longitude: longitude
+              }
             }
-          }
-        })
-      });
-       }
+          })
+        });
+      }
 
       //update markers
 
@@ -1543,6 +1543,12 @@
       });
     }
     async function addChat(toUserId, toUserName) {
+
+      if (toUserId == currentUserId)
+      {
+        toastr.error("Please try to chat with someone else")
+        return;
+      }
 
       if (document.querySelector('.person[data-name=\'' + toUserName + '\']') == null) {
         console.log("create new chat");
