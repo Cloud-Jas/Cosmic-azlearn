@@ -38,9 +38,9 @@ namespace CosmicChat.EventGrid.Subscribers
 
                var Cosmicuser = ((JObject)(eventGridEvent.Data)).ToObject<CosmosUser>();
 
-               _logger.LogInformation(JsonConvert.SerializeObject(Cosmicuser));
+               _logger.LogInformation(JsonConvert.SerializeObject(Cosmicuser));                              
 
-               var leaderBoard = new CosmosLeaderboard()
+               await leaderBoardCreate.AddAsync(new CosmosLeaderboard
                {
                   id = Guid.NewGuid().ToString("N"),
                   score = 0,
@@ -53,11 +53,7 @@ namespace CosmicChat.EventGrid.Subscribers
                   id=Cosmicuser?.id,
                   name=Cosmicuser?.name
                }
-               };
-
-               _logger.LogInformation(JsonConvert.SerializeObject(leaderBoard));
-
-               await leaderBoardCreate.AddAsync(leaderBoard);
+               });
 
                _logger.LogInformation("leaderboard updated");
             }
@@ -66,7 +62,7 @@ namespace CosmicChat.EventGrid.Subscribers
          {
             _logger.LogError(ex.Message+ex.StackTrace.ToString());
          }
-
+         
       }
    }
 }

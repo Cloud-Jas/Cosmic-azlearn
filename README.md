@@ -7,7 +7,7 @@ Azure Static WebApps for hosting
 
 # Potential use cases
 
-- Create chat application 
+- Create and modelling chat application 
 - Integrate leaderboard and live scheduled tasks for each users
 - Customize maps with various realtime markers
 - Track statistics of a individual user 
