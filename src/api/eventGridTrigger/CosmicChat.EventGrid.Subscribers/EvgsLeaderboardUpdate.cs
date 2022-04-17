@@ -51,7 +51,7 @@ namespace CosmicChat.EventGrid.Subscribers
                   user = new User
                   {
                      id = CosmicuserTask.userId,
-                     name = Cosmicuser.name
+                     name = CosmicuserTask.userName
                   }
                });
 
