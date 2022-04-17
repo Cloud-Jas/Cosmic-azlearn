@@ -1167,7 +1167,11 @@
         };
 
         this.interval = null;
-        this.remainingSeconds = 60 * 60;
+        let utcSeconds = new Date().getTime() / 1000.00;
+        var d = new Date(0);
+        d.setUTCSeconds(utcSeconds);
+        var minutes = d.getUTCMinutes();
+        this.remainingSeconds = (60 - minutes) * 60;
         this.start();
       }
 
@@ -1188,7 +1192,12 @@
           this.updateInterfaceTime();
 
           if (this.remainingSeconds === 0) {
-            this.stop();
+            let utcSeconds = new Date().getTime() / 1000.00;
+            var d = new Date(0);
+            d.setUTCSeconds(utcSeconds);
+            var minutes = d.getUTCMinutes();
+            this.remainingSeconds = (60 - minutes) * 60;
+            this.start();
           }
         }, 1000);
 
@@ -1229,6 +1238,7 @@
     var map, geolocationControl, currentUser;
     let chatIds = [];
     let avatarUrl = "https://static.toiimg.com/thumb/resizemode-4,msid-76729750,imgsize-249247,width-720/76729750.jpg"
+    let locationTasks = [];
 
     // Set the options that I want
     toastr.options = {
@@ -1412,7 +1422,7 @@
       console.log(chatsData);
 
       chatIds = [];
-      chatsData.forEach(async (element, i) => {        
+      chatsData.forEach(async (element, i) => {
         await addChatItems(element.chatName, element.toUserId, element.chatId, element.lastMessage, element.lastMessageTimestamp);
         var chatMessages = await getAllMessagesByChatId(element.chatId);
         var chatMessagesData = await chatMessages.json();
@@ -1535,7 +1545,7 @@
       map.markers.clear();
 
       locations.forEach(element => {
-        console.log(element);
+        locationTasks.push(element);
         var marker = new atlas.HtmlMarker({
           htmlContent: "<div><div class='pin'></div><div class='pulse'></div></div>",
           position: [element.address.position.longitude, element.address.position.latitude],
@@ -1591,8 +1601,7 @@
     }
 
     async function addChatItems(name, userId, chatId, message = null, timestamp = null) {
-      chatIds.push(element.chatId);
-      var githubResponse = await fetch("https://api.github.com/search/users?q=" + name + "+in%3Ausername");
+      var githubResponse = await fetch("https://api.github.com/search/users?q=" + name + "+in%3Ausername&client_id=9888a3fdd6d8bbd4020e&client-secret=02d50d9a92993ed259c27558c7a0b58dadf63665");
       var data = (await githubResponse.json())
       console.log(data);
       if (data.items[0] != null)
@@ -1720,8 +1729,8 @@
         let checkMark = document.createElement("div");
         checkMark.classList.add("check-mark");
         checkMark.innerHTML = '<img src="icon-check.svg">';
-        checkMark.addEventListener("click", function () {
-          markCompleted(item.id);
+        checkMark.addEventListener("click", async function () {
+          await markCompleted(item);
         })
         checkContainer.appendChild(checkMark);
 
@@ -1743,12 +1752,23 @@
     }
 
 
-    function markCompleted(id) {
-      let checkItem = document.querySelector('.todo-item[data-id=\'' + id + '\'] .check-mark');
-      document.querySelector('.todo-item[data-id=\'' + id + '\'] .check-mark').classList.contains("checked") ? checkItem.classList.remove("checked") : checkItem.classList.add("checked");
-      let todoItem = document.querySelector('.todo-item[data-id=\'' + id + '\'] .todo-text');
-      document.querySelector('.todo-item[data-id=\'' + id + '\'] .todo-text').classList.contains("checked") ? todoItem.classList.remove("checked") : todoItem.classList.add("checked");
-
+    async function markCompleted(item) {
+      if (!item.isCompleted) {
+        var markCompleteRequest = await fetch('/api/tasks/' + item.id + '/users/' + currentUserId, {
+          method: "POST",
+          body: JSON.stringify(item)
+        });
+        var markCompletedResponse = await markCompleteRequest.json();
+        console.log(markCompletedResponse);
+        if (markCompleteResponse.success) {
+          let checkItem = document.querySelector('.todo-item[data-id=\'' + item.id + '\'] .check-mark');
+          document.querySelector('.todo-item[data-id=\'' + item.id + '\'] .check-mark').classList.contains("checked") ? checkItem.classList.remove("checked") : checkItem.classList.add("checked");
+        }
+        else
+        {
+          toastr.error("Please try after some time");
+        }
+      }
     }
 
     function checkCurrentDate(date) {

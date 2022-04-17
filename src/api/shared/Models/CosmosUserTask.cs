@@ -25,6 +25,7 @@ namespace CosmicChat.Shared.Models
    {
       public string id { get; set; }
       public string userId { get; set; }
+      public string userName { get; set; }
       public TaskDetail taskDetail { get; set; }
       public bool isCompleted { get; set; }
       public long _ts { get; set; }

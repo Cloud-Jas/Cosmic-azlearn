@@ -11,9 +11,7 @@ using CosmicChat.Shared.Extensions;
 using CosmicChat.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.Documents.Linq;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
@@ -35,13 +33,50 @@ namespace CosmicChat.API
          _middlewareBuilder = middlewareBuilder;
       }
 
+      [FunctionName("CreateTask")]
+      [OpenApiOperation(operationId: "CreateTask", tags: new[] { "name" })]
+      [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
+      [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
+      public async Task<IActionResult> CreateTask(
+          [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "task")] HttpRequest req,
+          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUserTasks", Connection = "CosmicDBIdentity")] IAsyncCollector<CosmosUserTask> tasksCreate)
+      {
+         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         {
+            _logger.LogInformation("C# HTTP trigger function processed a request.");
+
+
+            try
+            {
+               string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+
+               var userTask = JObject.Parse(requestBody).ToObject<CosmosUserTask>();
+
+               userTask.id = String.IsNullOrWhiteSpace(userTask.id) ? Guid.NewGuid().ToString("N") : userTask.id;
+
+               await tasksCreate.AddAsync(userTask);
+
+               return new ObjectResult(userTask) { StatusCode = StatusCodes.Status201Created };
+
+            }
+            catch (Exception ex)
+            {
+               _logger.LogError($"Create task failed : { ex }");
+
+               return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
+
+         }));
+      }
+
       [FunctionName("CompleteTask")]
       [OpenApiOperation(operationId: "CompleteTask", tags: new[] { "name" })]
       [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
       [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
       public async Task<IActionResult> CompleteTask(
-          [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "tasks/{taskId}/users/{userId}")] HttpRequest req, string taskId, string userId,
-          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicTaskValidator", Connection = "CosmicDBIdentity", PartitionKey = "{userId}")] DocumentClient client,
+          [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "tasks/{taskId}/users/{userId}")] HttpRequest req,
+          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicTaskValidator", Connection = "CosmicDBIdentity", PartitionKey = "{userId}")] CosmosClient client,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUserTasks", Connection = "CosmicDBIdentity", Id = "{taskId}", PartitionKey = "{userId}")] IAsyncCollector<CosmosUserTask> userTasks)
       {
          return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
@@ -55,36 +90,41 @@ namespace CosmicChat.API
 
                var userTask = JObject.Parse(requestBody).ToObject<CosmosUserTask>();
 
-               Uri collectionUri = UriFactory.CreateDocumentCollectionUri("CosmicDB", "CosmicTaskValidator");
+               Container container = client.GetDatabase("CosmicDB").GetContainer("CosmicTaskValidator");
 
-               IDocumentQuery<CosmosUserValidator> query = client.CreateDocumentQuery<CosmosUserValidator>(collectionUri, new FeedOptions
-               {
-                  PartitionKey = new PartitionKey(userId)
-               })
-                .Where(p => p._ts < DateTimeOffset.Now.ToUnixTimeSeconds() && p._ts > DateTimeExtensions.GetPastHourTimestamp())
-                .AsDocumentQuery();
+               QueryDefinition queryDefinition = new QueryDefinition("Select * from p where  p._ts < @UnixTimeSeconds and p._ts > @PastHourTimestamp")
+               .WithParameter("@UnixTimeSeconds", DateTimeOffset.Now.ToUnixTimeSeconds())
+               .WithParameter("@PastHourTimestamp", DateTimeExtensions.GetPastHourTimestamp());
 
-               while (query.HasMoreResults)
+               using (FeedIterator<CosmosUserValidator> resultSet = container.GetItemQueryIterator<CosmosUserValidator>(queryDefinition))
                {
-                  foreach (CosmosUserValidator validatorResult in await query.ExecuteNextAsync())
+                  while (resultSet.HasMoreResults)
                   {
-                     Uri usersCollectionUri = UriFactory.CreateDocumentCollectionUri("CosmicDB", "CosmicUsers");
+                     FeedResponse<CosmosUserValidator> validatorResultSet = await resultSet.ReadNextAsync();
 
-                     IDocumentQuery<CosmosUser> userQuery = client.CreateDocumentQuery<CosmosUser>(usersCollectionUri, new FeedOptions
-                     {
-                        PartitionKey = new PartitionKey(validatorResult.toUserId)
-                     })
-                      .AsDocumentQuery();
+                     CosmosUserValidator validatorResult = validatorResultSet.First();
 
-                     while (query.HasMoreResults)
+                     Container userContainer = client.GetDatabase("CosmicDB").GetContainer("CosmicUsers");
+
+                     QueryDefinition userQueryDefinition = new QueryDefinition("Select * from c where c.id=@userId")
+               .WithParameter("@userId", validatorResult.toUserId);
+
+                     using (FeedIterator <CosmosUser> userResultSet = userContainer.GetItemQueryIterator<CosmosUser>(userQueryDefinition))
                      {
-                        foreach (CosmosUser userResult in await query.ExecuteNextAsync())
+                        while (userResultSet.HasMoreResults)
                         {
-                           if (userTask.taskDetail.country.subDivision.Equals(userResult.address.country.subDivision) && userTask.taskDetail.country.name.Equals(userResult.address.country.name))
+                           FeedResponse<CosmosUser> userResponseResultSet = await userResultSet.ReadNextAsync();
+
+                           CosmosUser userResponse = userResponseResultSet.First();
+
+                           if (userTask.taskDetail.country.subDivision.Equals(userResponse.address.country.subDivision, StringComparison.OrdinalIgnoreCase) && userTask.taskDetail.country.name.Equals(userResponse.address.country.name, StringComparison.OrdinalIgnoreCase))
                            {
                               userTask.isCompleted = true;
                               await userTasks.AddAsync(userTask);
-                              return new OkResult();
+                              return new OkObjectResult(new
+                              {
+                                 Success=true
+                              });
                            }
                         }
 
@@ -92,7 +132,10 @@ namespace CosmicChat.API
                   }
                }
 
-               return new NoContentResult();
+               return new OkObjectResult(new
+               {
+                  Success= false
+               });
 
             }
             catch (Exception ex)
