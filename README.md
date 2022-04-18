@@ -53,6 +53,10 @@ This repo contains a solution that creates a serverless chat application with a 
 data in Azure Cosmos DB, Azure Functions and Azure EventGrid for events processing, Azure WebPubSub for websocket client messaging and
 Azure Static WebApps for hosting
 
+# Website link
+
+[https://cosmospark.iamdivakarkumar.com/](https://cosmospark.iamdivakarkumar.com/)
+
 
 # Potential use cases
 
