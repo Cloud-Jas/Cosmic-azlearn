@@ -78,6 +78,9 @@ Once users have sent a message to another person from the specified location in 
 		GET | LookupAddress | test
 
 3. For persisting the data we use Azure Cosmos DB and below are the containers 
+  - CosmicUsers
+  - CosmicChats
+  - CosmicUserChats
 
 
 # Application Screens
