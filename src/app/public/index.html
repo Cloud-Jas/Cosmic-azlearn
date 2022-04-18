@@ -1581,8 +1581,8 @@
 
       else {
         refreshChatContainer();
-        document.querySelector('.person[data-name=\'' + name + '\']').classList.add('active');
-        var chatId = document.querySelector('.person[data-name=' + name + ']').getAttribute("data-chat");
+        document.querySelector('.person[data-name=\'' + toUserName + '\']').classList.add('active');
+        var chatId = document.querySelector('.person[data-name=' + toUserName + ']').getAttribute("data-chat");
         document.querySelector('.chat[data-chat=\'' + chatId + '\']').classList.add('active-chat')
         setAciveChat(document.querySelector('.person[data-chat=\'' + chatId + '\']'));
       }
