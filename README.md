@@ -4,6 +4,24 @@
 <img src="https://github.com/Cloud-Jas/Cosmic-azlearn/actions/workflows/frontend.yml/badge.svg" alt="Build status"/>
 </a>
 
+<a href="https://github.com/Cloud-Jas/Cosmic-azlearn/actions/workflows">
+<img src="https://github.com/Cloud-Jas/Cosmic-azlearn/actions/workflows/backend.yml/badge.svg" alt="Build status"/>
+</a>
+
+<a href="https://github.com/Cloud-Jas/Cosmic-azlearn/actions/workflows">
+<img src="https://github.com/Cloud-Jas/Cosmic-azlearn/actions/workflows/timer.yml/badge.svg" alt="Build status"/>
+</a>
+
+<a href="https://github.com/Cloud-Jas/Cosmic-azlearn/actions/workflows">
+<img src="https://github.com/Cloud-Jas/Cosmic-azlearn/actions/workflows/changefeed.yml/badge.svg" alt="Build status"/>
+</a>
+
+<a href="https://github.com/Cloud-Jas/Cosmic-azlearn/actions/workflows">
+<img src="https://github.com/Cloud-Jas/Cosmic-azlearn/actions/workflows/eventgrid.yml/badge.svg" alt="Build status"/>
+</a>
+
+</p>
+
 <p align="center">
   <a href="#features">Potential Use cases</a> | <a href="#CosmosPark-Premier-League-architecture">CosmosPark Premier League architecture</a> | <a href="#Workflow">Workflow</a> | <a href="#Components">Components</a> | <a href="#special-thanks">Special Thanks</a> | <a href="https://github.com/Cloud-Jas/Cosmic-azlearn/discussions">Forum</a>
 </p>
