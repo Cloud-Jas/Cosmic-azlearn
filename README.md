@@ -31,16 +31,31 @@ Azure Static WebApps for hosting
 # Components
 
 ## Azure static webapps
+
 [Azure staticwebapps](https://azure.microsoft.com/en-us/services/app-service/static/#overview) accelerate your app development with managed global availability for static content hosting and dynamic scale for integrated serverless APIs. 
 In this architecture, Azure StaticWebApps is used as our hosting platform that hosts both frontend and backend REST APIs.
 
 ## Azure Maps
+
 [Azure Maps](https://azure.microsoft.com/en-in/services/azure-maps/#azuremaps-overview) allows you to add maps, spatial analytics, and mobility solutions to your apps with geospatial APIs
 
 ## Azure Functions
+
 [Azure Functions](https://azure.microsoft.com/en-us/services/functions/) is a serverless platform solution on Azure that allows developers to write compute-on-demand code, 
 without having to maintain any of the underlying systems. In this architecture, Azure Functions can host APIs, and any work that needs to be done asynchronously, such as running periodic jobs and computing statistics over a certain period of time.
 
+## Azure CosmosDB
+
+[Azure CosmosDB](https://azure.microsoft.com/en-us/services/cosmos-db/) is a fully managed NoSQL database service for modern app development. In our application we make use of Azure CosmosDB in a serverless mode, where
+automatic provision of throughput occurs and will provide us moderate performance. This is also suitable for workloads of any size and a cost-effective solution.
+
+## Azure EventGrid
+
+[Azure EventGrid](https://azure.microsoft.com/en-us/services/event-grid/) Simplify your event-based apps with Event Grid, a single service for managing routing of all events from any source to any destination. Designed for high availability, consistent performance, and dynamic scale, Event Grid lets you focus on your app logic rather than infrastru
+
+## Azure WebPubSub
+
+[Azure WebPubSub](https://azure.microsoft.com/en-us/services/web-pubsub/) Develop web applications with real-time messaging using Azure Web PubSub, a fully managed service that supports native and serverless WebSockets. Create loosely coupled, scalable applications—including chats, live broadcasting, and IoT dashboards—with the publish-subscribe messaging pattern. Keep your focus on functionality while Web PubSub manages the flow of data and content to your webpages and mobile applications.
 
 
 
@@ -99,6 +114,19 @@ handling these business use cases.
 	| CosmicUserTasks | Yes |
 	| CosmicLeaderboards | Yes |
 	| CosmicGlobalTimer | No |
+
+5. Now the application publishes changefeed events using Azure EventGrid. EventGrid helps us to decouple event publishers from event subscribers , by using a pub/sub model and a simple HTTP-based event delivery. This 
+process allows the system to build scalable serverless applications.
+
+6. We have different subscribers (event handlers) built using Azure Function to subscribe to the events published from changefeed. Based on the event criteria , the events are filtered and reaches to the right subscribers in a near real-time.
+
+7. Event handlers then publishes the event data to Azure Web pubsub service that acts as our messaging component, responsible for live updates in the frontend without need of us to refresh the page with the help of websockets
+
+8. Few event handlers writes those event data to a different container in Azure cosmosdb for further processing and normalization of data.
+
+9. Azure WebpubSub publishes the message back to frontend with the help of websockets.
+
+10. And similarly frontend communicates directly to Azure Web PubSub service for few business use case where persisting data is not a reliable option.
 	
 
 # Application Screens
