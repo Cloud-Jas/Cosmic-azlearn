@@ -63,6 +63,10 @@ Once users have sent a message to another person from the specified location in 
 
 2. Fontend communicates with the backend APIs to perform business use cases. We have used Azure functions HTTP Triggers to expose these APIs. The source of this backend API can be found in **src/api/httpTrigger** and consists of a .NET 6 Azure function app.
 
+    | Col1  | Col2 |
+    | ----- | ---- |
+    | Col1  | Col2 |
+
 		Verb  |  FunctionName  | Description
 		------------ | ------------
 		POST | CreateChat | test
