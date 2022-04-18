@@ -1,7 +1,7 @@
 <p align="center">  
 
 <a href="https://github.com/Cloud-Jas/Cosmic-azlearn/actions/workflows">
-<img src="https://github.com/Cloud-Jas/Cosmic-azlearn/actions/workflows/build.yml/badge.svg" alt="Build status"/>
+<img src="https://github.com/Cloud-Jas/Cosmic-azlearn/actions/workflows/frontend.yml/badge.svg" alt="Build status"/>
 </a>
 
 <p align="center">
