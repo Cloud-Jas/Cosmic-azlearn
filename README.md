@@ -63,23 +63,19 @@ Once users have sent a message to another person from the specified location in 
 
 2. Fontend communicates with the backend APIs to perform business use cases. We have used Azure functions HTTP Triggers to expose these APIs. The source of this backend API can be found in **src/api/httpTrigger** and consists of a .NET 6 Azure function app.
 
-    | Col1  | Col2 |
+    | Verb  | FunctionName |
     | ----- | ---- |
-    | Col1  | Col2 |
-
-		Verb  |  FunctionName  | Description
-		------------ | ------------
-		POST | CreateChat | test
-		POST | CreateUser | test
-		GET | GetAllChatsByUserId | tes
-		GET | GetAllMessagesByChatId | test
-		GET | GetAllUsers | test
-		GET | GetAllUsersByCountryCode | test
-		GET | GetConnectionDetails | test
-		GET | GetCosmosLeaderBoards | test
-		GET | GetToken | test
-		GET | GetUserById | test
-		GET | LookupAddress | test
+    | POST | CreateChat |
+    | POST | CreateUser |
+	| GET | GetAllChatsByUserId |
+	| GET | GetAllMessagesByChatId |
+	| GET | GetAllUsers |
+	| GET | GetAllUsersByCountryCode |
+	| GET | GetConnectionDetails |
+	| GET | GetCosmosLeaderBoards |
+	| GET | GetToken |
+	| GET | GetUserById |
+	| GET | LookupAddress |
 
 3. For persisting the data we use Azure Cosmos DB and below are the containers 
   - CosmicUsers
