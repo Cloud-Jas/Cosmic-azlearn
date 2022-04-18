@@ -75,7 +75,7 @@ namespace CosmicChat.API
       [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
       [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
       public async Task<IActionResult> CompleteTask(
-          [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "tasks/{taskId}/users/{userId}/timestamp/{starttimestamp}/{endtimestamp}")] HttpRequest req,string taskId,string userId,long starttimestamp,long endtimestamp,
+          [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "tasks/{taskId}/users/{userId}/timestamp/{starttimestamp}/{endtimestamp}")] HttpRequest req, string taskId, string userId, long starttimestamp, long endtimestamp,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicTaskValidator", Connection = "CosmicDBIdentity", PartitionKey = "{userId}")] CosmosClient client,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUserTasks", Connection = "CosmicDBIdentity", Id = "{taskId}", PartitionKey = "{userId}")] IAsyncCollector<CosmosUserTask> userTasks)
       {
@@ -92,8 +92,10 @@ namespace CosmicChat.API
 
                Container container = client.GetDatabase("CosmicDB").GetContainer("CosmicTaskValidator");
 
-               QueryDefinition queryDefinition = new QueryDefinition("Select * from p where  p._ts > @startTimestamp and p._ts < @endTimestamp")
+               QueryDefinition queryDefinition = new QueryDefinition("Select * from p where p.userId=@userId and p.toUserId=@toUserId and p._ts > @startTimestamp and p._ts < @endTimestamp")
                .WithParameter("@startTimestamp", starttimestamp)
+               .WithParameter("@userId", userTask.userId)
+               .WithParameter("@toUserId", userTask.taskDetail.userId)
                .WithParameter("@endTimestamp", endtimestamp);
 
                using (FeedIterator<CosmosUserValidator> resultSet = container.GetItemQueryIterator<CosmosUserValidator>(queryDefinition))
@@ -117,9 +119,9 @@ namespace CosmicChat.API
 
                            CosmosUser userResponse = userResponseResultSet.First();
 
-                           if (userTask.taskDetail.country.subDivision.Equals(userResponse.address.country.subDivision, StringComparison.OrdinalIgnoreCase) 
+                           if (userTask.taskDetail.country.subDivision.Equals(userResponse.address.country.subDivision, StringComparison.OrdinalIgnoreCase)
                            && userTask.taskDetail.country.name.Equals(userResponse.address.country.name, StringComparison.OrdinalIgnoreCase)
-                           && userTask.taskDetail.country.secondarySubDivision.Equals(userResponse.address.country.secondarySubDivision,StringComparison.OrdinalIgnoreCase))
+                           && userTask.taskDetail.country.secondarySubDivision.Equals(userResponse.address.country.secondarySubDivision, StringComparison.OrdinalIgnoreCase))
                            {
                               userTask.isCompleted = true;
                               await userTasks.AddAsync(userTask);
@@ -159,7 +161,7 @@ namespace CosmicChat.API
       [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
       [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
       public async Task<IActionResult> GetAllTasksByUserId(
-          [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tasks/users/{userId}/timestamp/{starttimestamp}/{endtimestamp}")] HttpRequest req,string userId,long starttimestamp,long endtimestamp,
+          [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tasks/users/{userId}/timestamp/{starttimestamp}/{endtimestamp}")] HttpRequest req, string userId, long starttimestamp, long endtimestamp,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUserTasks", Connection = "CosmicDBIdentity",
          SqlQuery ="Select * from c where c.userId={userId} and c._ts > {starttimestamp} and c._ts < {endtimestamp} ")] IEnumerable<CosmosUserTask> userTasks)
       {

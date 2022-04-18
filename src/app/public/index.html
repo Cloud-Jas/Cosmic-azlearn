@@ -1394,6 +1394,7 @@
       setTimeout(ws.onopen = () => {
         updateStatus('Connected');
         joinGroup(ws, `global-location`, Date.now());
+        joinGroup(ws, `global-score`, Date.now() + 30);
         console.log("websoket joining groups");
         var chatGlobalpubsub = 'chats-' + currentUserId;
         joinGroup(ws, chatGlobalpubsub, Date.now() + 10);
@@ -1443,8 +1444,7 @@
             });
           }
         }
-        else if(data.from=="group" && data.data.type=="ScoreUpdatedEvent")
-        {
+        else if (data.from == "group" && data.data.type == "ScoreUpdatedEvent") {
           await updateLeaderboards();
         }
         console.log("websocket message", data);
