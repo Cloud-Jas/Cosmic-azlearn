@@ -1,3 +1,34 @@
+<p align="center">  
+
+<a href="https://github.com/Cloud-Jas/Cosmic-azlearn/actions/workflows">
+<img src="https://github.com/Cloud-Jas/Cosmic-azlearn/actions/workflows/build.yml/badge.svg" alt="Build status"/>
+</a>
+
+<p align="center">
+  <a href="#features">Potential Use cases</a> | <a href="#CosmosPark-Premier-League-architecture">CosmosPark Premier League architecture</a> | <a href="#Workflow">Workflow</a> | <a href="#Components">Components</a> | <a href="#special-thanks">Special Thanks</a> | <a href="https://github.com/Cloud-Jas/Cosmic-azlearn/discussions">Forum</a>
+</p>
+
+<br/>
+
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+  <li><a href="#CosmosPark"> CosmosPark</a></li>
+    <li>
+      <a href="#Potential-use-cases">Potential Use Cases</a>                  
+    </li>    
+    <li>
+      <a href="#CosmosPark-Premier-League-architecture">CosmosPark Premier League architecture</a>      
+    </li>
+	<li><a href="#CosmosDB-DataFlow">CosmosDB DataFlow</a></li>
+    <li><a href="#Components">Components</a></li>
+    <li><a href="#Workflow">Workflow</a></li>
+    <li><a href="#Application-Screens">Application Screens</a></li>
+	<li><a href="#Sponsor">Sponsor</a></li>
+    <li><a href="#contact">Contact</a></li>    
+  </ol>
+</details>
+
 # CosmosPark
 
 This repo contains a solution that creates a serverless chat application with a gamified experience that stores 
@@ -16,12 +47,11 @@ Azure Static WebApps for hosting
 
 # CosmosPark Premier League architecture
 
-![https://cosmospark.iamdivakarkumar.com/](./images/cosmospark.png)
+![https://cosmospark.iamdivakarkumar.com/](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/gtmau0tfzgnw0hotw7wg.png)
 
 # CosmosDB DataFlow
 
-![https://cosmospark.iamdivakarkumar.com/](./images/cosmospark-dataflow.png)
-
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/kjcfb6m9ckaceet6g47i.png)
 
 <p align="center">
   <b> Realtime Cosmic chat app built using various Azure services </b>
@@ -131,7 +161,36 @@ process allows the system to build scalable serverless applications.
 
 # Application Screens
 
-![https://cosmospark.iamdivakarkumar.com/](./images/Cosmic-Azlearn-1.png)
-![https://cosmospark.iamdivakarkumar.com/](./images/Cosmic-Azlearn-2.png)
-![https://cosmospark.iamdivakarkumar.com/](./images/Cosmic-Azlearn-3.png)
-![https://cosmospark.iamdivakarkumar.com/](./images/Cosmic-Azlearn-4.png)
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/2mgb08nkuua1g2bvnijb.png)
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/dfr9hmbfa9ybkwgotwpe.png)
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/l3v4l39jdcn8wuc0gnv1.png)
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/nk94rlzfep3lv2gipp5g.png)
+
+## Special Thanks
+
+Thank you to the following people for their support and contributions!
+
+- [@Sriram](https://www.linkedin.com/in/sriram-ganesan-it/) 
+
+## Sponsor
+
+Leave a ⭐ if this library helped you at handling cross-cutting concerns in serverless architecture.
+
+<a href="https://www.buymeacoffee.com/divakarkumar" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 145 !important;" ></a>
+
+[Website](//iamdivakarkumar.com) | [LinkedIn](https://www.linkedin.com/in/divakar-kumar/) | [Forum](https://github.com/Cloud-Jas/AzureFunctions.Extensions.Middleware/discussions) | [Contribution Guide](CONTRIBUTING.md) | [Donate](https://www.buymeacoffee.com/divakarkumar) | [License](LICENSE.txt)
+
+&copy; [Divakar Kumar](//github.com/Divakar-Kumar)
+
+For detailed documentation, please visit the [docs](docs/readme.md). 
+
+
+## Contact
+
+Divakar Kumar - [@Divakar-Kumar](https://www.linkedin.com/in/divakar-kumar/) - https://iamdivakarkumar.com
+
+Project Link: [https://github.com/Cloud-Jas/Cosmic-azlearn](https://github.com/Cloud-Jas/Cosmic-azlearn)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+[product-screenshot]: https://dev-to-uploads.s3.amazonaws.com/uploads/articles/3x47dpp54ok0w1g6vkp7.png
