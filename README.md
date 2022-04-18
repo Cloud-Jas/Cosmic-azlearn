@@ -63,19 +63,19 @@ Once users have sent a message to another person from the specified location in 
 
 2. Fontend communicates with the backend APIs to perform business use cases. We have used Azure functions HTTP Triggers to expose these APIs. The source of this backend API can be found in **src/api/httpTrigger** and consists of a .NET 6 Azure function app.
 
-		| Verb  |  FunctionName  | Description
-		| ------------ | ------------ |
-		| POST | CreateChat | test |
-		| POST | CreateUser | test |
-		| GET | GetAllChatsByUserId | test |
-		| GET | GetAllMessagesByChatId | test |
-		| GET | GetAllUsers | test |
-		| GET | GetAllUsersByCountryCode | test |
-		| GET | GetConnectionDetails | test |
-		| GET | GetCosmosLeaderBoards | test |
-		| GET | GetToken | test |
-		| GET | GetUserById | test |
-		| GET | LookupAddress | test |
+  | Verb  |  FunctionName  | Description
+  | ------------ | ------------ |
+  | POST | CreateChat | test |
+  | POST | CreateUser | test |
+  | GET | GetAllChatsByUserId | test |
+  | GET | GetAllMessagesByChatId | test |
+  | GET | GetAllUsers | test |
+  | GET | GetAllUsersByCountryCode | test |
+  | GET | GetConnectionDetails | test |
+  | GET | GetCosmosLeaderBoards | test |
+  | GET | GetToken | test |
+  | GET | GetUserById | test |
+  | GET | LookupAddress | test |
 
 3. For persisting the data we use Azure Cosmos DB and below are the containers 
 
