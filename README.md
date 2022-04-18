@@ -20,7 +20,7 @@ Azure Static WebApps for hosting
 
 # CosmosDB DataFlow
 
-![https://cosmospark.iamdivakarkumar.com/](./images/cosmopark-dataflow.png)
+![https://cosmospark.iamdivakarkumar.com/](./images/cosmospark-dataflow.png)
 
 
 <p align="center">
