@@ -27,7 +27,7 @@ namespace CosmicChat.CosmosDB.ChangeFeed
             containerName: "CosmicLeaderboards",
             Connection = "CosmicDBIdentity",
             LeaseContainerName = "leasesCosmicLeaderboards",
-            CreateLeaseContainerIfNotExists =true)]IReadOnlyList<CosmosChat> input, [EventGrid(TopicEndpointUri = "EventGridEndpoint", TopicKeySetting = "EventGridKey")] IAsyncCollector<EventGridEvent> eventCollector)
+            CreateLeaseContainerIfNotExists =true)]IReadOnlyList<CosmosLeaderboard> input, [EventGrid(TopicEndpointUri = "EventGridEndpoint", TopicKeySetting = "EventGridKey")] IAsyncCollector<EventGridEvent> eventCollector)
       {
 
          if (input != null && input.Count > 0)
