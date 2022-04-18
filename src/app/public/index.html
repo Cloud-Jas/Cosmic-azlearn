@@ -1060,39 +1060,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="todo-items">
-                    <div class="todo-item">
-                      <div class="check">
-                        <div class="check-mark checked">
-                          <img src="icon-check.svg">
-                        </div>
-                      </div>
-                      <div class="todo-text checked">
-                        Say "Hi" to someone from Chennai,TamilNadu
-                      </div>
-                      <span
-                        style="color: #56b439;float:right;display:flex;align-items: center;font-weight: bold;margin-left: auto;margin-right: 10px;">+2
-                        Points</span>
-                    </div>
-                    <div class="todo-item">
-                      <div class="check">
-                        <div class="check-mark">
-
-                        </div>
-                      </div>
-                      <div class="todo-text">
-                        Say "Hi" to someone from Palakkad,Kerala
-                      </div>
-                    </div>
-                    <div class="todo-item">
-                      <div class="check">
-                        <div class="check-mark">
-                        </div>
-                      </div>
-                      <div class="todo-text">
-                        Say "Hi" to someone from Coimbatore,TamilNadu
-                      </div>
-                    </div>
+                  <div class="todo-items">                
                   </div>
                 </div>
               </div>
@@ -1153,77 +1121,6 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
   <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
   <script>
-
-
-    class Timer {
-      constructor(root) {
-        root.innerHTML = Timer.getHTML();
-
-        this.el = {
-          minutes: root.querySelector(".timer__part--minutes"),
-          seconds: root.querySelector(".timer__part--seconds"),
-          control: root.querySelector(".timer__btn--control"),
-          reset: root.querySelector(".timer__btn--reset")
-        };
-
-        this.interval = null;
-        let utcSeconds = new Date().getTime() / 1000.00;
-        var d = new Date(0);
-        d.setUTCSeconds(utcSeconds);
-        var minutes = d.getUTCMinutes();
-        this.remainingSeconds = (60 - minutes) * 60;
-        this.start();
-      }
-
-      updateInterfaceTime() {
-        const minutes = Math.floor(this.remainingSeconds / 60);
-        const seconds = this.remainingSeconds % 60;
-
-        this.el.minutes.textContent = minutes.toString().padStart(2, "0");
-        this.el.seconds.textContent = seconds.toString().padStart(2, "0");
-      }
-
-
-      start() {
-        if (this.remainingSeconds === 0) return;
-
-        this.interval = setInterval(() => {
-          this.remainingSeconds--;
-          this.updateInterfaceTime();
-
-          if (this.remainingSeconds === 0) {
-            let utcSeconds = new Date().getTime() / 1000.00;
-            var d = new Date(0);
-            d.setUTCSeconds(utcSeconds);
-            var minutes = d.getUTCMinutes();
-            this.remainingSeconds = (60 - minutes) * 60;
-            this.start();
-          }
-        }, 1000);
-
-      }
-
-      stop() {
-        clearInterval(this.interval);
-
-        this.interval = null;
-
-      }
-
-      static getHTML() {
-        return `
-			<span class="timer__part timer__part--minutes">00</span>
-			<span class="timer__part">:</span>
-			<span class="timer__part timer__part--seconds">00</span>		
-		`;
-      }
-    }
-
-    new Timer(
-      document.querySelector(".timer")
-    );    
-  </script>
-  <script>
     document.addEventListener("DOMContentLoaded", getUserInfo);
     var SpeechSDK;
     var recognizer;
@@ -1237,6 +1134,9 @@
     let toChatId;
     var map, geolocationControl, currentUser;
     let chatIds = [];
+    let timerEl;
+    let timerInterval;
+    let remainingSeconds;
     let avatarUrl = "https://static.toiimg.com/thumb/resizemode-4,msid-76729750,imgsize-249247,width-720/76729750.jpg"
     let locationTasks = [];
 
@@ -1259,6 +1159,69 @@
     }
 
     let friends, chat;
+
+    function getHTML() {
+      return `
+			<span class="timer__part timer__part--minutes">00</span>
+			<span class="timer__part">:</span>
+			<span class="timer__part timer__part--seconds">00</span>		
+		`;
+    }
+    function triggerTimer() {
+
+      var root = document.querySelector(".timer");
+      root.innerHTML = getHTML();
+      timerEl = {
+        minutes: root.querySelector(".timer__part--minutes"),
+        seconds: root.querySelector(".timer__part--seconds"),
+        control: root.querySelector(".timer__btn--control"),
+        reset: root.querySelector(".timer__btn--reset")
+      };
+
+      timerInterval = null;
+      let utcSeconds = new Date().getTime() / 1000.00;
+      var d = new Date(0);
+      d.setUTCSeconds(utcSeconds);
+      var minutes = d.getUTCMinutes();
+      remainingSeconds = (60 - minutes) * 60;
+      start();
+    }
+
+    function stop() {
+      clearInterval(this.interval);
+      this.interval = null;
+
+    }
+
+    function updateInterfaceTime() {
+      const minutes = Math.floor(remainingSeconds / 60);
+      const seconds = remainingSeconds % 60;
+
+      timerEl.minutes.textContent = minutes.toString().padStart(2, "0");
+      timerEl.seconds.textContent = seconds.toString().padStart(2, "0");
+    }
+
+    function start() {
+      if (remainingSeconds === 0) return;
+
+      timerInterval = setInterval(() => {
+        remainingSeconds--;
+        this.updateInterfaceTime();
+
+        if (remainingSeconds === 0) {
+          let utcSeconds = new Date().getTime() / 1000.00;
+          var d = new Date(0);
+          d.setUTCSeconds(utcSeconds);
+          var minutes = d.getUTCMinutes();
+          remainingSeconds = (60 - minutes) * 60;
+          start();
+        }
+      }, 1000);
+
+    }
+
+
+    triggerTimer();
 
     function refreshChatContainer() {
       friends = {
@@ -1415,6 +1378,8 @@
 
       await updateMapMarkers();
 
+
+
       //get all chats
 
       var chatsResponse = await getAllChatsByUserId(currentUserId);
@@ -1447,7 +1412,6 @@
         joinGroup(ws, chatGlobalpubsub, Date.now() + 10);
         console.log(chatGlobalpubsub);
       }, 1000);
-
 
       //get all tasks
 
@@ -1495,7 +1459,6 @@
         console.log("websocket message", data);
       }
     }
-
 
     async function sendChatBarNotification(toUserId, chatId, message, timestamp) {
       await (reinitChatItems(chatId, message, timestamp));
@@ -1563,6 +1526,8 @@
         map.markers.add(marker);
       });
     }
+
+
     async function addChat(toUserId, toUserName) {
 
       if (toUserId == currentUserId) {
@@ -1714,58 +1679,113 @@
     }
 
     async function generateTaskItems() {
-      var todoItemsResponse = await fetch('/api/tasks/users/' + currentUserId);
+      let utcSeconds = new Date().getTime() / 1000.00;
+      var d = new Date(0);
+      d.setUTCSeconds(utcSeconds);
+      d.setMinutes(0);
+      var startTimestamp = d.getTime() / 1000;
+      d.setMinutes(60);
+      var endTimestamp = d.getTime() / 1000;
+
+      var todoItemsResponse = await fetch('/api/tasks/users/' + currentUserId + '/timestamp/' + startTimestamp + '/' + endTimestamp);
       var taskItems = await todoItemsResponse.json();
 
       let userTaskItems = [];
 
-      taskItems.forEach((item) => {
-        let todoItem = document.createElement("div");
-        todoItem.classList.add("todo-item");
-        todoItem.setAttribute("data-id", item.id);
-        todoItem.setAttribute("data-isCompleted", item.isCompleted);
-        let checkContainer = document.createElement("div");
-        checkContainer.classList.add("check");
-        let checkMark = document.createElement("div");
-        checkMark.classList.add("check-mark");
-        checkMark.innerHTML = '<img src="icon-check.svg">';
-        checkMark.addEventListener("click", async function () {
-          await markCompleted(item);
+      if (taskItems.length > 0) {
+        taskItems.forEach((item) => {
+          let todoItem = document.createElement("div");
+          todoItem.classList.add("todo-item");
+          todoItem.setAttribute("data-id", item.id);
+          todoItem.setAttribute("data-isCompleted", item.isCompleted);
+          let checkContainer = document.createElement("div");
+          checkContainer.classList.add("check");
+          let checkMark = document.createElement("div");
+          checkMark.classList.add("check-mark");
+          checkMark.innerHTML = '<img src="icon-check.svg">';
+          checkMark.addEventListener("click", async function () {
+            await markCompleted(item);
+          })
+          checkContainer.appendChild(checkMark);
+
+          let todoText = document.createElement("div");
+          todoText.classList.add("todo-text");
+          todoText.innerText = "Say 'Hi-CosmosPark' to a friend joined from " + item.taskDetail.country.subDivision + ", " +item.taskDetail.country.secondarySubDivision+ ", " + item.taskDetail.country.name;
+
+          if (item.isCompleted == true) {
+            checkMark.classList.add("checked");
+            todoText.classList.add("checked");
+          }
+          todoItem.appendChild(checkContainer);
+          todoItem.appendChild(todoText);
+          userTaskItems.push(todoItem)
         })
-        checkContainer.appendChild(checkMark);
+        document.querySelector(".todo-items").replaceChildren(...userTaskItems);
+      }
+      else {
 
-        let todoText = document.createElement("div");
-        todoText.classList.add("todo-text");
-        todoText.innerText = "Say 'Hi-CosmosPark' to a friend joined from " + item.taskDetail.country.subDivision + ", " + item.taskDetail.country.name;
+        for (var i = 0; i < 3; i++) {
+          const randomTask = locationTasks[Math.floor(Math.random() * locationTasks.length)];
 
-        if (item.isCompleted == true) {
-          checkMark.classList.add("checked");
-          todoText.classList.add("checked");
+          var task = {
+            id: URL.createObjectURL(new Blob([])).substr(-36),
+            userId: currentUserId,
+            userName: currentUserName,
+            taskDetail: {
+              userId: randomTask.id,
+              userName: randomTask.name,
+              country: {
+                code: randomTask.address.country.code,
+                subDivision: randomTask.address.country.subDivision,
+                secondarySubDivision: randomTask.address.country.secondarySubDivision,
+                name: randomTask.address.country.name
+              },
+              street: {
+                name: randomTask.name,
+                nameAndNumber: randomTask.nameAndNumber
+              },
+              position: {
+                latitude: randomTask.address.position.latitude,
+                longitude: randomTask.address.position.longitude
+              }
+            },
+            isCompleted: false
+          }
+
+          await fetch('/api/task', {
+            method: "POST",
+            body: JSON.stringify(task)
+          });
         }
-        todoItem.appendChild(checkContainer);
-        todoItem.appendChild(todoText);
-        userTaskItems.push(todoItem)
-      })
-      document.querySelector(".todo-items").replaceChildren(...userTaskItems);
+        generateTaskItems();
+      }
 
 
     }
 
 
     async function markCompleted(item) {
+      
+      let utcSeconds = new Date().getTime() / 1000.00;
+      var d = new Date(0);
+      d.setUTCSeconds(utcSeconds);
+      d.setMinutes(0);
+      var startTimestamp = d.getTime() / 1000;
+      d.setMinutes(60);
+      var endTimestamp = d.getTime() / 1000;
+
       if (!item.isCompleted) {
-        var markCompleteRequest = await fetch('/api/tasks/' + item.id + '/users/' + currentUserId, {
+        var markCompleteRequest = await fetch('/api/tasks/' + item.id + '/users/' + currentUserId+'/timestamp/'+startTimestamp+'/'+endTimestamp, {
           method: "POST",
           body: JSON.stringify(item)
         });
         var markCompletedResponse = await markCompleteRequest.json();
         console.log(markCompletedResponse);
-        if (markCompleteResponse.success) {
+        if (markCompletedResponse.success) {
           let checkItem = document.querySelector('.todo-item[data-id=\'' + item.id + '\'] .check-mark');
           document.querySelector('.todo-item[data-id=\'' + item.id + '\'] .check-mark').classList.contains("checked") ? checkItem.classList.remove("checked") : checkItem.classList.add("checked");
         }
-        else
-        {
+        else {
           toastr.error("Please try after some time");
         }
       }

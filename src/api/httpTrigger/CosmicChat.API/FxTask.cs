@@ -75,7 +75,7 @@ namespace CosmicChat.API
       [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
       [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
       public async Task<IActionResult> CompleteTask(
-          [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "tasks/{taskId}/users/{userId}")] HttpRequest req,
+          [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "tasks/{taskId}/users/{userId}/timestamp/{starttimestamp}/{endtimestamp}")] HttpRequest req,string taskId,string userId,long starttimestamp,long endtimestamp,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicTaskValidator", Connection = "CosmicDBIdentity", PartitionKey = "{userId}")] CosmosClient client,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUserTasks", Connection = "CosmicDBIdentity", Id = "{taskId}", PartitionKey = "{userId}")] IAsyncCollector<CosmosUserTask> userTasks)
       {
@@ -92,9 +92,9 @@ namespace CosmicChat.API
 
                Container container = client.GetDatabase("CosmicDB").GetContainer("CosmicTaskValidator");
 
-               QueryDefinition queryDefinition = new QueryDefinition("Select * from p where  p._ts < @UnixTimeSeconds and p._ts > @PastHourTimestamp")
-               .WithParameter("@UnixTimeSeconds", DateTimeOffset.Now.ToUnixTimeSeconds())
-               .WithParameter("@PastHourTimestamp", DateTimeExtensions.GetPastHourTimestamp());
+               QueryDefinition queryDefinition = new QueryDefinition("Select * from p where  p._ts > @startTimestamp and p._ts < @endTimestamp")
+               .WithParameter("@startTimestamp", starttimestamp)
+               .WithParameter("@endTimestamp", endtimestamp);
 
                using (FeedIterator<CosmosUserValidator> resultSet = container.GetItemQueryIterator<CosmosUserValidator>(queryDefinition))
                {
@@ -109,7 +109,7 @@ namespace CosmicChat.API
                      QueryDefinition userQueryDefinition = new QueryDefinition("Select * from c where c.id=@userId")
                .WithParameter("@userId", validatorResult.toUserId);
 
-                     using (FeedIterator <CosmosUser> userResultSet = userContainer.GetItemQueryIterator<CosmosUser>(userQueryDefinition))
+                     using (FeedIterator<CosmosUser> userResultSet = userContainer.GetItemQueryIterator<CosmosUser>(userQueryDefinition))
                      {
                         while (userResultSet.HasMoreResults)
                         {
@@ -117,13 +117,15 @@ namespace CosmicChat.API
 
                            CosmosUser userResponse = userResponseResultSet.First();
 
-                           if (userTask.taskDetail.country.subDivision.Equals(userResponse.address.country.subDivision, StringComparison.OrdinalIgnoreCase) && userTask.taskDetail.country.name.Equals(userResponse.address.country.name, StringComparison.OrdinalIgnoreCase))
+                           if (userTask.taskDetail.country.subDivision.Equals(userResponse.address.country.subDivision, StringComparison.OrdinalIgnoreCase) 
+                           && userTask.taskDetail.country.name.Equals(userResponse.address.country.name, StringComparison.OrdinalIgnoreCase)
+                           && userTask.taskDetail.country.secondarySubDivision.Equals(userResponse.address.country.secondarySubDivision,StringComparison.OrdinalIgnoreCase))
                            {
                               userTask.isCompleted = true;
                               await userTasks.AddAsync(userTask);
                               return new OkObjectResult(new
                               {
-                                 Success=true
+                                 Success = true
                               });
                            }
                         }
@@ -134,7 +136,7 @@ namespace CosmicChat.API
 
                return new OkObjectResult(new
                {
-                  Success= false
+                  Success = false
                });
 
             }
@@ -142,7 +144,10 @@ namespace CosmicChat.API
             {
                _logger.LogError($"Complete tasks failed : { ex }");
 
-               return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+               return new OkObjectResult(new
+               {
+                  Success = false
+               });
             }
 
 
@@ -154,8 +159,9 @@ namespace CosmicChat.API
       [OpenApiParameter(name: "name", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **Name** parameter")]
       [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
       public async Task<IActionResult> GetAllTasksByUserId(
-          [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tasks/users/{userId}")] HttpRequest req,
-          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUserTasks", Connection = "CosmicDBIdentity", PartitionKey = "{userId}")] IEnumerable<CosmosUserTask> userTasks)
+          [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tasks/users/{userId}/timestamp/{starttimestamp}/{endtimestamp}")] HttpRequest req,string userId,long starttimestamp,long endtimestamp,
+          [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUserTasks", Connection = "CosmicDBIdentity",
+         SqlQuery ="Select * from c where c.userId={userId} and c._ts > {starttimestamp} and c._ts < {endtimestamp} ")] IEnumerable<CosmosUserTask> userTasks)
       {
          return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
          {
