@@ -18,6 +18,10 @@ Azure Static WebApps for hosting
 
 ![https://cosmospark.iamdivakarkumar.com/](./images/cosmospark.png)
 
+# CosmosDB DataFlow
+
+![https://cosmospark.iamdivakarkumar.com/](./images/cosmopark-dataflow.png)
+
 
 <p align="center">
   <b> Realtime Cosmic chat app built using various Azure services </b>
