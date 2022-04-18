@@ -1060,7 +1060,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="todo-items">                
+                  <div class="todo-items">
                   </div>
                 </div>
               </div>
@@ -1086,12 +1086,12 @@
                 <table>
                   <thead>
                     <tr>
-                      <th class="rank"></th>
+                      <th class="rank">Rank</th>
                       <th class="nick">Name</th>
                       <th class="sp">Score</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="leaderboard-body">
                     <tr>
                       <td class="rank">1</td>
                       <td class="nick">Jasritha</td>
@@ -1378,7 +1378,9 @@
 
       await updateMapMarkers();
 
+      // get all leaderboards
 
+      await updateLeaderboards();
 
       //get all chats
 
@@ -1456,8 +1458,54 @@
             });
           }
         }
+        else if(data.from=="group" && data.data.type=="ScoreUpdatedEvent")
+        {
+          await updateLeaderboards();
+        }
         console.log("websocket message", data);
       }
+    }
+
+
+    async function updateLeaderboards() {
+      var leaderboardResponse = await getAllLeaderboards();
+      var leaderboardData = await leaderboardResponse.json();
+      var result = [];
+      leaderboardData.reduce(function (res, value) {
+        if (!res[value.user.id]) {
+          res[value.user.id] = { userId: value.user.id, userName: value.user.name, score: 0 };
+          result.push(res[value.user.id])
+        }
+        res[value.user.id].score += value.score;
+        return res;
+      }, {});
+      console.log(result);
+
+      result.sort((a, b) => {
+        return b.score - a.score;
+      })
+
+      console.log(result);
+
+      loadTable("leaderboard-body", ['index', 'userName', 'score'], result);
+
+    }
+
+    function loadTable(tableId, fields, data) {
+      var rows = '';
+      $.each(data, function (dataIndex, item) {
+        var row = '<tr>';
+        $.each(fields, function (index, field) {
+          if (field == "index") {
+            row += '<td>' + ++dataIndex + '</td>'
+          }
+          else {
+            row += '<td>' + item[field + ''] + '</td>';
+          }
+        });
+        rows += row + '<tr>';
+      });
+      $('#' + tableId).html(rows);
     }
 
     async function sendChatBarNotification(toUserId, chatId, message, timestamp) {
@@ -1710,7 +1758,7 @@
 
           let todoText = document.createElement("div");
           todoText.classList.add("todo-text");
-          todoText.innerText = "Say 'Hi-CosmosPark' to a friend joined from " + item.taskDetail.country.subDivision + ", " +item.taskDetail.country.secondarySubDivision+ ", " + item.taskDetail.country.name;
+          todoText.innerText = "Say 'Hi-CosmosPark' to a friend joined from " + item.taskDetail.country.subDivision + ", " + item.taskDetail.country.secondarySubDivision + ", " + item.taskDetail.country.name;
 
           if (item.isCompleted == true) {
             checkMark.classList.add("checked");
@@ -1765,7 +1813,7 @@
 
 
     async function markCompleted(item) {
-      
+
       let utcSeconds = new Date().getTime() / 1000.00;
       var d = new Date(0);
       d.setUTCSeconds(utcSeconds);
@@ -1775,7 +1823,7 @@
       var endTimestamp = d.getTime() / 1000;
 
       if (!item.isCompleted) {
-        var markCompleteRequest = await fetch('/api/tasks/' + item.id + '/users/' + currentUserId+'/timestamp/'+startTimestamp+'/'+endTimestamp, {
+        var markCompleteRequest = await fetch('/api/tasks/' + item.id + '/users/' + currentUserId + '/timestamp/' + startTimestamp + '/' + endTimestamp, {
           method: "POST",
           body: JSON.stringify(item)
         });
@@ -1889,7 +1937,10 @@
       }
     }
 
-
+    async function getAllLeaderboards() {
+      const response = await fetch('/api/leaderboards');
+      return response;
+    }
 
     async function getUserById(userId) {
       const response = await fetch('/api/user/' + userId);
