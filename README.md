@@ -77,11 +77,29 @@ Once users have sent a message to another person from the specified location in 
 	| GET | GetUserById |
 	| GET | LookupAddress |
 
-3. For persisting the data we use Azure Cosmos DB and below are the containers 
+3. For persisting the data we use Azure Cosmos DB and below are the containers. Azure CosmosDB is our core component from which all data are distributed to other event processing/communication components.
   - CosmicUsers
   - CosmicChats
   - CosmicUserChats
+  - CosmicUserTasks
+  - CosmicTaskValidator
+  - CosmicLeaderboards
+  - CosmicGlobalTimer
+ 
+4. Change Feeds are enabled for few of the containers that needs to be listened for any changes and it will be passed on to different components in the downstream. We have used Azure Functions CosmosDB Triggers for
+handling these business use cases. 
 
+    | Verb  | ChangeFeedEnabled? |
+    | ----- | ---- |
+    | CosmicUsers | Yes |
+	| CosmicChats | Yes |
+	| CosmicUsers | Yes |
+	| CosmicUserChats | Yes |
+	| CosmicTaskValidator | No |
+	| CosmicUserTasks | Yes |
+	| CosmicLeaderboards | Yes |
+	| CosmicGlobalTimer | No |
+	
 
 # Application Screens
 
