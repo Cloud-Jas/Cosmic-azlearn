@@ -38,7 +38,7 @@ namespace CosmicChat.CosmosDB.ChangeFeed
             foreach (var doc in input)
             {
                var source = "CosmosDb.CosmicLeaderboards";
-               var type = "CosmosDb.CosmiLeaderboards.Updated";               
+               var type = "CosmosDb.CosmicLeaderboards.Updated";               
 
                await eventCollector.AddAsync(new EventGridEvent(Guid.NewGuid().ToString("N"), source, doc, type, DateTime.UtcNow, "1.0"));               
             }
