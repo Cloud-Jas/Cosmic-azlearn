@@ -22,9 +22,9 @@ namespace CosmicChat.API
    public class FxChat
    {
       private readonly ILogger<FxChat> _logger;
-      private readonly IMiddlewareBuilder _middlewareBuilder;
+      private readonly IHttpMiddlewareBuilder _middlewareBuilder;
 
-      public FxChat(ILogger<FxChat> log, IMiddlewareBuilder middlewareBuilder)
+      public FxChat(ILogger<FxChat> log, IHttpMiddlewareBuilder middlewareBuilder)
       {
          _logger = log;
          _middlewareBuilder = middlewareBuilder;
@@ -38,7 +38,7 @@ namespace CosmicChat.API
           [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "chat")] HttpRequest req,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicChats", Connection = "CosmicDBIdentity")] IAsyncCollector<CosmosChat> chatsCreate)
       {
-         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         return await _middlewareBuilder.ExecuteAsync(new HttpMiddleware(async (httpContext) =>
          {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -77,7 +77,7 @@ namespace CosmicChat.API
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "chats/user/{userId}")] HttpRequest req,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUserChats", Connection = "CosmicDBIdentity", PartitionKey ="{userId}")] IEnumerable<CosmosUserChat> chats)
       {
-         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         return await _middlewareBuilder.ExecuteAsync(new HttpMiddleware(async (httpContext) =>
          {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -103,7 +103,7 @@ namespace CosmicChat.API
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "chats/{chatId}")] HttpRequest req,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicChats", Connection = "CosmicDBIdentity", PartitionKey = "{chatId}")] IEnumerable<CosmosChat> chats)
       {
-         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         return await _middlewareBuilder.ExecuteAsync(new HttpMiddleware(async (httpContext) =>
          {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 

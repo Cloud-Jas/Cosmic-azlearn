@@ -93,9 +93,9 @@ namespace CosmicChat.API
          services.Configure<WebPubSubOptions>(Configuration.GetSection("WebPubSub"));
 
          #region Middleware 
-         services.AddTransient<IMiddlewareBuilder, MiddlewareBuilder>((sp) =>
+         services.AddTransient<IHttpMiddlewareBuilder, HttpMiddlewareBuilder>((sp) =>
          {
-            var funcBuilder = new MiddlewareBuilder(sp.GetRequiredService<IHttpContextAccessor>());
+            var funcBuilder = new HttpMiddlewareBuilder(sp.GetRequiredService<IHttpContextAccessor>());
 
             funcBuilder.Use(new ExceptionMiddleware(new LoggerFactory().CreateLogger(nameof(ExceptionMiddleware))));
             funcBuilder.Use(new ClaimsCheckMiddleware(new LoggerFactory().CreateLogger(nameof(ClaimsCheckMiddleware))));

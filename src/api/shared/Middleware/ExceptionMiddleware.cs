@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CosmicChat.Shared.Middleware
 {
-   public class ExceptionMiddleware : ServerlessMiddleware
+   public class ExceptionMiddleware : HttpMiddlewareBase
    {
       private readonly ILogger _logger;
       public ExceptionMiddleware(ILogger logger)

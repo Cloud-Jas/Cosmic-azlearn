@@ -25,9 +25,9 @@ namespace CosmicChat.API
    public class FxTask
    {
       private readonly ILogger<FxTask> _logger;
-      private readonly IMiddlewareBuilder _middlewareBuilder;
+      private readonly IHttpMiddlewareBuilder _middlewareBuilder;
 
-      public FxTask(ILogger<FxTask> log, IMiddlewareBuilder middlewareBuilder)
+      public FxTask(ILogger<FxTask> log, IHttpMiddlewareBuilder middlewareBuilder)
       {
          _logger = log;
          _middlewareBuilder = middlewareBuilder;
@@ -41,7 +41,7 @@ namespace CosmicChat.API
           [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "task")] HttpRequest req,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUserTasks", Connection = "CosmicDBIdentity")] IAsyncCollector<CosmosUserTask> tasksCreate)
       {
-         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         return await _middlewareBuilder.ExecuteAsync(new HttpMiddleware(async (httpContext) =>
          {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -79,7 +79,7 @@ namespace CosmicChat.API
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicTaskValidator", Connection = "CosmicDBIdentity", PartitionKey = "{userId}")] CosmosClient client,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUserTasks", Connection = "CosmicDBIdentity", Id = "{taskId}", PartitionKey = "{userId}")] IAsyncCollector<CosmosUserTask> userTasks)
       {
-         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         return await _middlewareBuilder.ExecuteAsync(new HttpMiddleware(async (httpContext) =>
          {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -165,7 +165,7 @@ namespace CosmicChat.API
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUserTasks", Connection = "CosmicDBIdentity",
          SqlQuery ="Select * from c where c.userId={userId} and c._ts > {starttimestamp} and c._ts < {endtimestamp} ")] IEnumerable<CosmosUserTask> userTasks)
       {
-         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         return await _middlewareBuilder.ExecuteAsync(new HttpMiddleware(async (httpContext) =>
          {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 

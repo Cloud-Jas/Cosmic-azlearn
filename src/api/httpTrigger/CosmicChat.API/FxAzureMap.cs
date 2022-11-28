@@ -22,13 +22,13 @@ namespace azlearn.cosmic.API
    public class FxAzureMap
    {
       private readonly ILogger<FxAzureMap> _logger;
-      private readonly IMiddlewareBuilder _middlewareBuilder;
+      private readonly IHttpMiddlewareBuilder _middlewareBuilder;
       private readonly IOptions<AzureMapConfiguration> _azMapConfiguration;
 
       private static readonly string[] allowd = { "https://cosmic-azpark.azurewebsites.net/",
                                                     "http://localhost"};
 
-      public FxAzureMap(ILogger<FxAzureMap> log, IMiddlewareBuilder middlewareBuilder, IOptions<AzureMapConfiguration> azMapConfiguration)
+      public FxAzureMap(ILogger<FxAzureMap> log, IHttpMiddlewareBuilder middlewareBuilder, IOptions<AzureMapConfiguration> azMapConfiguration)
       {
          _logger = log;
          _middlewareBuilder = middlewareBuilder;
@@ -41,7 +41,7 @@ namespace azlearn.cosmic.API
       public async Task<IActionResult> GetToken(
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "azMap/token")] HttpRequest req)
       {
-         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         return await _middlewareBuilder.ExecuteAsync(new HttpMiddleware(async (httpContext) =>
          {
             try
             {
@@ -79,7 +79,7 @@ namespace azlearn.cosmic.API
       public async Task<IActionResult> LookupAddress(
     [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "azMap/addressLookup/{latitude}/{longitude}")] HttpRequest req, string latitude, string longitude)
       {
-         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         return await _middlewareBuilder.ExecuteAsync(new HttpMiddleware(async (httpContext) =>
          {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 

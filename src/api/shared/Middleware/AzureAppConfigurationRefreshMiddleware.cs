@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CosmicChat.Shared.Middleware
 {
-   public class AzureAppConfigurationRefreshMiddleware : ServerlessMiddleware
+   public class AzureAppConfigurationRefreshMiddleware : HttpMiddlewareBase
    {
       private readonly ILogger _logger;
       public IEnumerable<IConfigurationRefresher> Refreshers { get; }

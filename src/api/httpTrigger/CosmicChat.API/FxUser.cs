@@ -22,9 +22,9 @@ namespace CosmicChat.API
    public class FxUser
    {
       private readonly ILogger<FxUser> _logger;
-      private readonly IMiddlewareBuilder _middlewareBuilder;
+      private readonly IHttpMiddlewareBuilder _middlewareBuilder;
 
-      public FxUser(ILogger<FxUser> log, IMiddlewareBuilder middlewareBuilder)
+      public FxUser(ILogger<FxUser> log, IHttpMiddlewareBuilder middlewareBuilder)
       {
          _logger = log;
          _middlewareBuilder = middlewareBuilder;
@@ -38,7 +38,7 @@ namespace CosmicChat.API
           [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user")] HttpRequest req,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUsers", Connection = "CosmicDBIdentity")] IAsyncCollector<CosmosUser> usersCreate)
       {
-         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         return await _middlewareBuilder.ExecuteAsync(new HttpMiddleware(async (httpContext) =>
          {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -73,7 +73,7 @@ namespace CosmicChat.API
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "user/{userId}")] HttpRequest req,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUsers", Connection = "CosmicDBIdentity", Id = "{userId}",PartitionKey ="{userId}")] CosmosUser user)
       {
-         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         return await _middlewareBuilder.ExecuteAsync(new HttpMiddleware(async (httpContext) =>
          {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -99,7 +99,7 @@ namespace CosmicChat.API
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users")] HttpRequest req,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUsers", Connection = "CosmicDBIdentity")] IEnumerable<CosmosUser> users)
       {
-         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         return await _middlewareBuilder.ExecuteAsync(new HttpMiddleware(async (httpContext) =>
          {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -124,7 +124,7 @@ namespace CosmicChat.API
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/{countryCode}")] HttpRequest req,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicUsers", Connection = "CosmicDBIdentity", PartitionKey = "{countryCode}")] IEnumerable<CosmosUser> users)
       {
-         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         return await _middlewareBuilder.ExecuteAsync(new HttpMiddleware(async (httpContext) =>
          {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 

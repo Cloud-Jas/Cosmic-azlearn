@@ -22,9 +22,9 @@ namespace CosmicChat.API
    public class FxLeaderboard
    {
       private readonly ILogger<FxLeaderboard> _logger;
-      private readonly IMiddlewareBuilder _middlewareBuilder;
+      private readonly IHttpMiddlewareBuilder _middlewareBuilder;
 
-      public FxLeaderboard(ILogger<FxLeaderboard> log, IMiddlewareBuilder middlewareBuilder)
+      public FxLeaderboard(ILogger<FxLeaderboard> log, IHttpMiddlewareBuilder middlewareBuilder)
       {
          _logger = log;
          _middlewareBuilder = middlewareBuilder;
@@ -38,7 +38,7 @@ namespace CosmicChat.API
           [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "leaderboard")] HttpRequest req,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicLeaderboards", Connection = "CosmicDBIdentity")] IAsyncCollector<CosmosLeaderboard> leaderboardCreate)
       {
-         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         return await _middlewareBuilder.ExecuteAsync(new HttpMiddleware(async (httpContext) =>
          {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -75,7 +75,7 @@ namespace CosmicChat.API
           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "leaderboards")] HttpRequest req,
           [CosmosDB(databaseName: "CosmicDB", containerName: "CosmicLeaderboards", Connection = "CosmicDBIdentity")] IEnumerable<CosmosLeaderboard> leaderboards)
       {
-         return await _middlewareBuilder.ExecuteAsync(new FunctionsMiddleware(async (httpContext) =>
+         return await _middlewareBuilder.ExecuteAsync(new HttpMiddleware(async (httpContext) =>
          {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 

@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="AzureFunctions.Extensions.Middleware" Version="1.0.2" />
+		<PackageReference Include="AzureFunctions.Extensions.Middleware" Version="3.0.0" />
 		<PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="4.5.1" />
 	</ItemGroup>
 </Project>

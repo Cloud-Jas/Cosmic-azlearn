@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CosmicChat.Shared.Middleware
 {
-   public class ClaimsCheckMiddleware : ServerlessMiddleware
+   public class ClaimsCheckMiddleware : HttpMiddlewareBase
    {
       private readonly ILogger _logger;
       public ClaimsCheckMiddleware(ILogger logger)
