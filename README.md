@@ -57,6 +57,8 @@ Azure Static WebApps for hosting
 
 [https://cosmospark.iamdivakarkumar.com/](https://cosmospark.iamdivakarkumar.com/)
 
+(DUE TO COST CONSTRAINTS ALL AZURE SERVICES USED FOR COSMOS PARK ARE DECOMISSIONED)
+
 
 # Potential use cases
 
